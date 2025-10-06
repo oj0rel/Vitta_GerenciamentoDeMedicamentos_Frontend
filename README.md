@@ -1,50 +1,92 @@
-# Welcome to your Expo app 👋
+# 💊 Vitta – Gestor de Uso de Medicamentos
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+**Vitta** é um aplicativo mobile desenvolvido em **React Native** com **Expo**, criado para ajudar os usuários a **gerenciar o uso de medicamentos pessoais** de forma simples, prática e organizada. O app visa promover a **adesão correta ao tratamento**, evitando esquecimentos e facilitando o acompanhamento da rotina medicamentosa. 💙
 
-## Get started
+---
 
-1. Install dependencies
+## 🧩 Funcionalidades
 
+- **Cadastro de Tratamentos:** registre informações completas como medicamento, dosagem, frequência e duração do tratamento.
+- **Geração Automática de Agendamentos:** os agendamentos são criados automaticamente com base nos dados do tratamento, definindo os horários e dias em que o medicamento deve ser tomado.
+- **Lembretes e Notificações:** receba alertas nos horários corretos para não esquecer nenhum medicamento.
+- **Histórico de Uso:** acompanhe todos os medicamentos tomados e exporte seu histórico para consulta médica.
+- **Interface Intuitiva:** design limpo, com navegação fluida e componentes reutilizáveis para melhor usabilidade.
+- **Gerenciamento Personalizado:** atualize, edite ou remova tratamentos e agendamentos conforme o progresso do tratamento.
+- **Controle Visual:** visualize tratamentos ativos, finalizados e agendamentos futuros em seções separadas.
+
+---
+
+## 💼 Regras de Negócio
+
+1. Cada usuário pode cadastrar múltiplos **tratamentos**, cada um associado a um medicamento específico.
+2. Ao cadastrar um tratamento, o sistema gera automaticamente os **agendamentos** com base na frequência, horário e duração informados.
+3. O sistema deve alertar o usuário nos horários definidos pelos agendamentos.
+4. Quando um tratamento é finalizado, seus agendamentos são movidos para o **Histórico de Uso**.
+5. O usuário pode **editar ou excluir** tratamentos e agendamentos ativos a qualquer momento.
+6. O histórico pode ser **exportado ou baixado** em formato de arquivo (ex: PDF ou CSV).
+7. A interface deve manter **responsividade e acessibilidade**, adaptando-se a diferentes tamanhos de tela.
+8. Todos os dados são armazenados localmente (ou via backend, quando conectado ao servidor da aplicação).
+
+---
+
+## ⚙️ Tecnologias Utilizadas
+
+- **React Native**
+- **Expo**
+- **JavaScript / TypeScript**
+- **StyleSheet** (para estilização dos componentes)
+- **Componentização** (estrutura modular e reutilizável)
+
+---
+
+## 🚀 Como Executar o Projeto
+
+Siga os passos abaixo para rodar o **Vitta** localmente:
+
+1. **Clone o repositório:**
+   ```bash
+   git clone https://github.com/SEU_USUARIO/Vitta-App.git
+   ```
+
+2. **Acesse o diretório do projeto:**
+   ```bash
+   cd Vitta-App
+   ```
+
+3. **Instale as dependências:**
    ```bash
    npm install
    ```
 
-2. Start the app
-
+4. **Execute o aplicativo com o Expo:**
    ```bash
    npx expo start
    ```
 
-In the output, you'll find options to open the app in a
+5. **Visualize o app:**
+   - Escaneie o QR Code no terminal usando o app **Expo Go** (Android/iOS).
+   - Ou execute no emulador Android/iOS configurado.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+---
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## 🎨 Estrutura do Projeto
 
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```
+Vitta-App/
+│
+├── assets/              # Ícones, imagens e fontes
+├── components/          # Componentes reutilizáveis
+├── screens/             # Telas principais do app
+├── services/            # Lógica de negócio e integração com backend
+├── styles/              # Estilos globais
+├── App.js               # Arquivo principal da aplicação
+└── package.json
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+---
 
-## Learn more
+## 👥 Autores
 
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Desenvolvido por **Gabriel Santos Gonçalves da Silva** 💻  
+📍 Duque de Caxias - RJ  
+🔗 [LinkedIn](https://www.linkedin.com/in/ogabrieusiuva)
