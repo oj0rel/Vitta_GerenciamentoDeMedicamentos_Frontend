@@ -3,6 +3,7 @@
     "name": "vitta",
     "slug": "vitta",
     "version": "1.0.0",
+    "sdkVersion": "54.0.13",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "vitta",
@@ -38,7 +39,8 @@
             "backgroundColor": "#000000"
           }
         }
-      ]
+      ],
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true,

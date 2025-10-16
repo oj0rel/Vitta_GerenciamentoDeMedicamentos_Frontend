@@ -6,6 +6,7 @@
 
 ## 🧩 Funcionalidades
 
+- **Sistema de Login/Cadastro:** cada Usuário pode criar ou logar em seu próprio perfil no aplicativo.
 - **Cadastro de Tratamentos:** registre informações completas como medicamento, dosagem, frequência e duração do tratamento.
 - **Geração Automática de Agendamentos:** os agendamentos são criados automaticamente com base nos dados do tratamento, definindo os horários e dias em que o medicamento deve ser tomado.
 - **Lembretes e Notificações:** receba alertas nos horários corretos para não esquecer nenhum medicamento.
@@ -21,7 +22,7 @@
 1. Cada usuário pode cadastrar múltiplos **tratamentos**, cada um associado a um medicamento específico.
 2. Ao cadastrar um tratamento, o sistema gera automaticamente os **agendamentos** com base na frequência, horário e duração informados.
 3. O sistema deve alertar o usuário nos horários definidos pelos agendamentos.
-4. Quando um tratamento é finalizado, seus agendamentos são movidos para o **Histórico de Uso**.
+4. Quando todos os Agendamentos de um Tratamento são finalizados, este Tratamento recebe o status 'CONCLUIDO'.
 5. O usuário pode **editar ou excluir** tratamentos e agendamentos ativos a qualquer momento.
 6. O histórico pode ser **exportado ou baixado** em formato de arquivo (ex: PDF ou CSV).
 7. A interface deve manter **responsividade e acessibilidade**, adaptando-se a diferentes tamanhos de tela.
@@ -85,7 +86,7 @@ Vitta-App/
 
 ---
 
-## 👥 Autores
+## 👥 Autor
 
 Desenvolvido por **Gabriel Santos Gonçalves da Silva** 💻  
 📍 Duque de Caxias - RJ  
