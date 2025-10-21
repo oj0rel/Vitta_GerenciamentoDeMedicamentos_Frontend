@@ -1,4 +1,7 @@
-import { Image, StyleSheet, Text, View } from "react-native";
+import { CadastrarButton } from "@/src/components/hub/cadastrar/cadastrarButton";
+import { LoginButton } from "@/src/components/hub/login/loginButton";
+import { Image, Text, View } from "react-native";
+import { styles } from "./styles";
 
 export default function Hub() {
     return (
@@ -7,27 +10,11 @@ export default function Hub() {
 
             <Text style={styles.textTittle}>Vitta</Text>
             <Text style={styles.textSubtittle}>SUA SAÚDE EM DIA</Text>
+
+            <View style={styles.pressablesContainer}>
+                <CadastrarButton />
+                <LoginButton />
+            </View>
         </View>
     )
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-    },
-    textTittle: {
-        fontFamily: 'inria-sans.bold',
-        fontSize: 25, 
-        marginTop: 18,
-        marginBottom: 4, 
-        color: '#000000ff'
-    },
-    textSubtittle: {
-        fontFamily: 'inria-sans.bold',
-        fontSize: 25, 
-        marginBottom: 10, 
-        color: '#1CBDCF'
-    }
-})
