@@ -1,9 +1,9 @@
-import { CadastrarButton } from "@/src/components/hub/cadastrar/cadastrarButton";
-import { LoginButton } from "@/src/components/hub/login/loginButton";
+import { CadastrarButton } from "@/src/components/hubComponents/cadastrarButton/cadastrarButton";
+import { LoginButton } from "@/src/components/hubComponents/loginButton/loginButton";
 import { Image, Text, View } from "react-native";
 import { styles } from "./styles";
 
-export default function Hub() {
+export default function HubScreen() {
     return (
         <View style={styles.container}>
             <Image source={require(`../../assets/images/logo_vitta.png`)} />
