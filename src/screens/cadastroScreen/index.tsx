@@ -1,40 +1,70 @@
-import { CadastrarButton } from "@/src/components/hubComponents/cadastrarButton/cadastrarButton";
+import { ActionButton } from "@/src/components/actionButton/actionButton";
+import { FormInput } from "@/src/components/formInput";
 import LogoComponent from "@/src/components/logoComponent";
-import { router } from "expo-router";
-import { Text, TextInput, View } from "react-native";
+import { useState } from "react";
+import { ScrollView, View } from "react-native";
 import { styles } from "./styles";
 
 export default function CadastroScreen() {
+
+  const [nome, setNome] = useState('');
+  const [telefone, setTelefone] = useState('');
+  const [email, setEmail] = useState('');
+  const [senha, setSenha] = useState('');
+  
+  const handleCadastro = () => {
+    console.log("Nome: ", nome)
+    console.log("Telefone: ", telefone)
+    console.log("Email: ", email)
+    console.log("Senha: ", senha)
+  }
+
   return (
-    <View style={styles.container}>
+    <ScrollView
+      style={{ flex: 1 }}
+      contentContainerStyle={styles.container}
+      >
       <LogoComponent />
 
       <View style={styles.formBox}>
         <View style={styles.formBody}>
 
-            <View style={styles.formRequestBody}>
-                <Text style={styles.tittle}>Nome</Text>
-                <TextInput style={styles.inputBox} />
-            </View>
+            <FormInput
+              titulo="Nome"
+              value={nome}
+              onChangeText={setNome}
+              placeHolder="Digite seu nome"
+            />
 
-            <View style={styles.formRequestBody}>
-                <Text style={styles.tittle}>Telefone</Text>
-                <TextInput style={styles.inputBox} />
-            </View>
+            <FormInput
+              titulo="Telefone"
+              value={telefone}
+              onChangeText={setTelefone}
+              placeHolder="Digite seu número de telefone"
+            />
 
-            <View style={styles.formRequestBody}>
-                <Text style={styles.tittle}>Email</Text>
-                <TextInput style={styles.inputBox} />
-            </View>
-
+            <FormInput
+              titulo="Email"
+              value={email}
+              onChangeText={setEmail}
+              placeHolder="Digite seu email: ..@gmail.com"
+            />
+            
+            <FormInput
+              titulo="Senha"
+              value={senha}
+              onChangeText={setSenha}
+              placeHolder="Digite uma senha"
+            />
 
         </View>
       </View>
 
-        <CadastrarButton
+        <ActionButton
             titulo="CADASTRAR"
-            onPress={ () => router.push('/') } //colocar a rota para a outra tela
+            // onPress={ () => router.push('/') } //colocar a rota para a outra tela
+            onPress={handleCadastro}
         />
-    </View>
+    </ScrollView>
   );
 }

@@ -1,22 +1,8 @@
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
-  container: {
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  formBox: {
-    width: 400,
-    backgroundColor: '#1CBDCF',
-    borderRadius: 20,
-    margin: 16,
-  },
-  formBody: {
-    gap: 1,
-    padding: 20,
-  },
   formRequestBody: {
-    marginBottom: 14
+    marginBottom: 14,
   },
   tittle: {
     color: '#000',
@@ -29,5 +15,6 @@ export const styles = StyleSheet.create({
     height: 38,
     borderRadius: 10,
     paddingHorizontal: 10,
-  }
+    color: '#444444ff'
+  },
 });
