@@ -1,19 +1,19 @@
-import { router } from "expo-router";
 import { Pressable, Text } from "react-native";
 import { styles } from "./syles";
 
-export const CadastrarButton = ( { } ) => {
-    
-    function cadastrar() {
-        router.push('/cadastro')
-    }
+type CadastrarButtonProps = {
+    titulo: string;
+    onPress: () => void;
+}
+
+export const CadastrarButton = ( { onPress, titulo }: CadastrarButtonProps ) => {
 
     return (
         <Pressable
         style={styles.pressable}
-        onPress={ cadastrar }
+        onPress={ onPress }
         >
-            <Text style={styles.text}>CADASTRAR</Text>
+            <Text style={styles.text}>{titulo}</Text>
         </Pressable>
     )
 }
