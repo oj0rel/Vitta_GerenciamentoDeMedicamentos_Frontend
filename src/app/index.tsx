@@ -1,5 +1,4 @@
-import { CadastrarButton } from "@/src/components/hubComponents/cadastrarButton/cadastrarButton";
-import { LoginButton } from "@/src/components/hubComponents/loginButton/loginButton";
+import { ActionButton } from "@/src/components/actionButton/actionButton";
 import { router } from "expo-router";
 import { View } from "react-native";
 import LogoComponent from "../components/logoComponent";
@@ -11,11 +10,17 @@ export default function Index() {
       <LogoComponent />
 
       <View style={styles.pressablesContainer}>
-        <CadastrarButton
+        
+        <ActionButton
           titulo="CADASTRAR"
           onPress={ () => router.push('/cadastro') }
         />
-        <LoginButton />
+
+        <ActionButton
+          titulo="LOGIN"
+          onPress={ () => router.push('/') }
+        />
+
       </View>
     </View>
   );

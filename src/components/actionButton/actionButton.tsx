@@ -1,12 +1,12 @@
 import { Pressable, Text } from "react-native";
 import { styles } from "./syles";
 
-type CadastrarButtonProps = {
+type ActionButtonProps = {
     titulo: string;
     onPress: () => void;
 }
 
-export const CadastrarButton = ( { onPress, titulo }: CadastrarButtonProps ) => {
+export const ActionButton = ( { onPress, titulo }: ActionButtonProps ) => {
 
     return (
         <Pressable
