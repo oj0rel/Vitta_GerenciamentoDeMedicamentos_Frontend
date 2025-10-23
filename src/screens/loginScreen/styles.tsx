@@ -15,7 +15,4 @@ export const styles = StyleSheet.create({
     gap: 1,
     padding: 20,
   },
-  formRequestBody: {
-    marginBottom: 14
-  },
-});
+})

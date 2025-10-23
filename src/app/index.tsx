@@ -18,7 +18,7 @@ export default function Index() {
 
         <ActionButton
           titulo="LOGIN"
-          onPress={ () => router.push('/') }
+          onPress={ () => router.push('/login') }
         />
 
       </View>

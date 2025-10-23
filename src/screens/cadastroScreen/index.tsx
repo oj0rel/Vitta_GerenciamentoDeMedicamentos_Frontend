@@ -21,7 +21,7 @@ export default function CadastroScreen() {
 
   return (
     <ScrollView
-      style={{ flex: 1 }}
+      style={{ flex: 1, marginTop: 30, marginBottom: 40 }}
       contentContainerStyle={styles.container}
       >
       <LogoComponent />
@@ -60,11 +60,11 @@ export default function CadastroScreen() {
         </View>
       </View>
 
-        <ActionButton
-            titulo="CADASTRAR"
-            // onPress={ () => router.push('/') } //colocar a rota para a outra tela
-            onPress={handleCadastro}
-        />
+      <ActionButton
+          titulo="CADASTRAR"
+          // onPress={ () => router.push('/') } //colocar a rota para a outra tela
+          onPress={handleCadastro}
+      />
     </ScrollView>
   );
 }
