@@ -1,6 +1,7 @@
 import { ActionButton } from "@/src/components/actionButton/actionButton";
 import { FormInput } from "@/src/components/formInput";
 import LogoComponent from "@/src/components/logoComponent";
+import { router } from "expo-router";
 import { useState } from "react";
 import { ScrollView, View } from "react-native";
 import { styles } from "../cadastroScreen/styles";
@@ -43,7 +44,7 @@ export default function LoginScreen() {
 
       <ActionButton 
         titulo="LOGIN"
-        onPress={handleLogin}
+        onPress={ () => router.push('/(tabs)/home')}
       />
     </ScrollView>
   );

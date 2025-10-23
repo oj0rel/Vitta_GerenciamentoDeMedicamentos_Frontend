@@ -1,6 +1,7 @@
 import { ActionButton } from "@/src/components/actionButton/actionButton";
 import { FormInput } from "@/src/components/formInput";
 import LogoComponent from "@/src/components/logoComponent";
+import { router } from "expo-router";
 import { useState } from "react";
 import { ScrollView, View } from "react-native";
 import { styles } from "./styles";
@@ -63,7 +64,7 @@ export default function CadastroScreen() {
       <ActionButton
           titulo="CADASTRAR"
           // onPress={ () => router.push('/') } //colocar a rota para a outra tela
-          onPress={handleCadastro}
+          onPress={ () => router.push('/(tabs)/home') }
       />
     </ScrollView>
   );

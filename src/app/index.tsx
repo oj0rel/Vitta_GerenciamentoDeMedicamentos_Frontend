@@ -13,12 +13,12 @@ export default function Index() {
         
         <ActionButton
           titulo="CADASTRAR"
-          onPress={ () => router.push('/cadastro') }
+          onPress={ () => router.push('/(auth)/cadastro') }
         />
 
         <ActionButton
           titulo="LOGIN"
-          onPress={ () => router.push('/login') }
+          onPress={ () => router.push('/(auth)/login') }
         />
 
       </View>
