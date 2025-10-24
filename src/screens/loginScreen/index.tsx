@@ -1,18 +1,30 @@
 import { ActionButton } from "@/src/components/actionButton/actionButton";
 import { FormInput } from "@/src/components/formInput";
 import LogoComponent from "@/src/components/logoComponent";
+import { useSession } from "@/src/contexts/ctx";
 import { router } from "expo-router";
 import { useState } from "react";
-import { ScrollView, View } from "react-native";
+import { Alert, ScrollView, View } from "react-native";
 import { styles } from "../cadastroScreen/styles";
 
 export default function LoginScreen() {
-  const [email, setEmail] = useState("");
-  const [senha, setSenha] = useState("");
+  const { signIn } = useSession();
 
-  const handleLogin = () => {
-    console.log("Email: ", email);
-    console.log("Senha: ", senha);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleLogin = async () => {
+    try {
+      await signIn({
+        email: email,
+        password: password,
+      });
+
+      router.replace('/home')
+    } catch (error) {
+      console.error(error);
+      Alert.alert("Erro no login", "Usuário ou senha inválidos. Tente novamente.");
+    }
   };
 
   return (
@@ -34,9 +46,10 @@ export default function LoginScreen() {
 
           <FormInput
               titulo="Senha"
-              value={senha}
-              onChangeText={setSenha}
+              value={password}
+              onChangeText={setPassword}
               placeHolder="Digite uma senha"
+              secureTextEntry
             />
 
         </View>
@@ -44,7 +57,7 @@ export default function LoginScreen() {
 
       <ActionButton 
         titulo="LOGIN"
-        onPress={ () => router.push('/(tabs)/home')}
+        onPress={ handleLogin }
       />
     </ScrollView>
   );

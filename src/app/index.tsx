@@ -1,8 +1,7 @@
 import { ActionButton } from "@/src/components/actionButton/actionButton";
 import { router } from "expo-router";
-import { View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import LogoComponent from "../components/logoComponent";
-import { styles } from "./styles";
 
 export default function Index() {
   return (
@@ -13,15 +12,40 @@ export default function Index() {
         
         <ActionButton
           titulo="CADASTRAR"
-          onPress={ () => router.push('/(auth)/cadastro') }
+          onPress={ () => router.replace('/cadastro') }
         />
 
         <ActionButton
           titulo="LOGIN"
-          onPress={ () => router.push('/(auth)/login') }
+          onPress={ () => router.replace('/login') }
         />
 
       </View>
     </View>
   );
 }
+
+export const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    textTittle: {
+        fontFamily: 'inria-sans.bold',
+        fontSize: 25, 
+        marginTop: 18,
+        marginBottom: 4, 
+        color: '#000000ff',
+        fontWeight: 'bold',
+    },
+    textSubtittle: {
+        fontFamily: 'inria-sans.bold',
+        fontSize: 25, 
+        marginBottom: 10, 
+        color: '#1CBDCF'
+    },
+    pressablesContainer: {
+        marginTop: 8,
+    }
+})

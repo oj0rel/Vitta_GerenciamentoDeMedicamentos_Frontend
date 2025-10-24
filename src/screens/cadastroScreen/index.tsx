@@ -64,7 +64,7 @@ export default function CadastroScreen() {
       <ActionButton
           titulo="CADASTRAR"
           // onPress={ () => router.push('/') } //colocar a rota para a outra tela
-          onPress={ () => router.push('/(tabs)/home') }
+          onPress={ () => router.push('/home') }
       />
     </ScrollView>
   );

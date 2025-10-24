@@ -6,9 +6,10 @@ type FormInputProps = {
     value: string;
     onChangeText?: ((text: string) => void) | undefined
     placeHolder: string;
+    secureTextEntry?: true;
 };
 
-export const FormInput = ({ titulo, value, onChangeText, placeHolder }: FormInputProps) => {
+export const FormInput = ({ titulo, value, onChangeText, placeHolder, secureTextEntry }: FormInputProps) => {
   return (
     <View style={styles.formRequestBody}>
         <Text style={styles.tittle}>{titulo}</Text>
@@ -17,6 +18,7 @@ export const FormInput = ({ titulo, value, onChangeText, placeHolder }: FormInpu
           value={ value }
           onChangeText={ onChangeText }
           placeholder={ placeHolder }
+          secureTextEntry={ secureTextEntry }
         />
     </View>
   );

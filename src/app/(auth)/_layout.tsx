@@ -1,6 +1,7 @@
 import { Stack } from "expo-router";
 
 export default function AuthRootLayout() {
+
   return (
     <Stack>
       <Stack.Screen name="cadastro" options={{ title: "Cadastro de Usuário" }} />
