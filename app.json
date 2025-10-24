@@ -8,6 +8,9 @@
     "scheme": "vitta",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "router": {
+      "root": "src/app"
+    },
     "ios": {
       "supportsTablet": true
     },
@@ -39,7 +42,8 @@
           }
         }
       ],
-      "expo-font"
+      "expo-font",
+      "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": true,
