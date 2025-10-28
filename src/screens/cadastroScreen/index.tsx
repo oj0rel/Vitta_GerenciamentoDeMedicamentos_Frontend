@@ -1,24 +1,35 @@
 import { ActionButton } from "@/src/components/actionButton/actionButton";
 import { FormInput } from "@/src/components/formInput";
 import LogoComponent from "@/src/components/logoComponent";
+import { useSession } from "@/src/contexts/ctx";
 import { router } from "expo-router";
 import { useState } from "react";
-import { ScrollView, View } from "react-native";
+import { Alert, ScrollView, View } from "react-native";
 import { styles } from "./styles";
 
 export default function CadastroScreen() {
+  const { signUp } = useSession();
 
   const [nome, setNome] = useState('');
   const [telefone, setTelefone] = useState('');
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   
-  const handleCadastro = () => {
-    console.log("Nome: ", nome)
-    console.log("Telefone: ", telefone)
-    console.log("Email: ", email)
-    console.log("Senha: ", senha)
-  }
+  const handleCadastro = async () => {
+    try {
+      await signUp({
+        nome: nome,
+        telefone: telefone,
+        email: email,
+        senha: senha,
+      });
+
+      router.replace('/home');
+    } catch (error) {
+      console.error(error);
+      Alert.alert("Erro no cadastro", "Usuário ou senha inválidos. Tente novamente.");
+    }
+  };
 
   return (
     <ScrollView
@@ -63,8 +74,7 @@ export default function CadastroScreen() {
 
       <ActionButton
           titulo="CADASTRAR"
-          // onPress={ () => router.push('/') } //colocar a rota para a outra tela
-          onPress={ () => router.push('/home') }
+          onPress={ handleCadastro }
       />
     </ScrollView>
   );

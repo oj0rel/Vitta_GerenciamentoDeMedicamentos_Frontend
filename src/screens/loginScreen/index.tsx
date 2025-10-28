@@ -10,17 +10,17 @@ import { styles } from "../cadastroScreen/styles";
 export default function LoginScreen() {
   const { signIn } = useSession();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [senha, setSenha] = useState('');
 
   const handleLogin = async () => {
     try {
       await signIn({
         email: email,
-        password: password,
+        senha: senha,
       });
 
-      router.replace('/home')
+      router.replace('/home');
     } catch (error) {
       console.error(error);
       Alert.alert("Erro no login", "Usuário ou senha inválidos. Tente novamente.");
@@ -46,8 +46,8 @@ export default function LoginScreen() {
 
           <FormInput
               titulo="Senha"
-              value={password}
-              onChangeText={setPassword}
+              value={senha}
+              onChangeText={setSenha}
               placeHolder="Digite uma senha"
               secureTextEntry
             />
