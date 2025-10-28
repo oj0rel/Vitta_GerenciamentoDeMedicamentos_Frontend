@@ -1,9 +1,10 @@
-import { UsuarioLoginData } from "@/src/types/authTypes";
+import { UsuarioCadastroData, UsuarioLoginData } from "@/src/types/authTypes";
 import React from "react";
-import { usuarioLogin } from "../api/usuarioApi";
+import { usuarioCadastro, usuarioLogin } from "../api/usuarioApi";
 import { useStorageState } from "../hooks/useStorageState";
 
 type AuthContextData = {
+  signUp: (data: UsuarioCadastroData) => Promise<void>;
   signIn: (data: UsuarioLoginData) => Promise<void>;
   signOut: () => void;
   session?: string | null;
@@ -11,6 +12,7 @@ type AuthContextData = {
 }
 
 const AuthContext = React.createContext<AuthContextData>({
+  signUp: async () => {},
   signIn: async () => {},
   signOut: () => null,
   session: null,
@@ -35,6 +37,13 @@ export function SessionProvider(props: React.PropsWithChildren) {
   return (
     <AuthContext.Provider
       value={{
+        signUp: async(data: UsuarioCadastroData) => {
+          const response = await usuarioCadastro(data);
+
+          if (response.token) {
+            setSession(response.token);
+          }
+        },
         signIn: async (data: UsuarioLoginData) => {
           const response = await usuarioLogin(data);
 
