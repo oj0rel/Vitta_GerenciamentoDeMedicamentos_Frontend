@@ -8,7 +8,7 @@ import { Alert, ScrollView, View } from "react-native";
 import { styles } from "./styles";
 
 export default function CadastroScreen() {
-  const { signUp } = useSession();
+  const { signUp, signIn } = useSession();
 
   const [nome, setNome] = useState('');
   const [telefone, setTelefone] = useState('');
@@ -20,6 +20,11 @@ export default function CadastroScreen() {
       await signUp({
         nome: nome,
         telefone: telefone,
+        email: email,
+        senha: senha,
+      });
+
+      await signIn({
         email: email,
         senha: senha,
       });
