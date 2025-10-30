@@ -1,7 +1,7 @@
 import { ActionButton } from "@/src/components/actionButton/actionButton";
 import { FormInput } from "@/src/components/formInput";
 import LogoComponent from "@/src/components/logoComponent";
-import { useSession } from "@/src/contexts/ctx";
+import { useSession } from "@/src/contexts/authContext";
 import { router } from "expo-router";
 import { useState } from "react";
 import { Alert, ScrollView, View } from "react-native";
