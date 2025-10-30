@@ -1,4 +1,4 @@
-import { useSession } from "@/src/contexts/ctx";
+import { useSession } from "@/src/contexts/authContext";
 import { Stack } from "expo-router";
 
 export default function TabsRootLayout() {

@@ -1,14 +1,16 @@
-import { router, Stack, useSegments } from "expo-router";
+import { router, Stack, useRootNavigationState, useSegments } from "expo-router";
 import React from "react";
 import { ActivityIndicator } from "react-native";
-import { SessionProvider, useSession } from "../contexts/ctx";
+import { SessionProvider, useSession } from "../contexts/authContext";
 
 function RootLayoutNav() {
   const { session, isLoading } = useSession();
   const segments = useSegments();
 
+  const navigationState = useRootNavigationState();
+
   React.useEffect(() => {
-    if (isLoading) {
+    if (isLoading || !navigationState?.key) {
       return;
     }
 
@@ -23,9 +25,9 @@ function RootLayoutNav() {
     } else if (session && (inAuthGroup || isPublicIndex)) {
       router.replace("/(tabs)/home");
     }
-  }, [session, isLoading, segments]);
+  }, [session, isLoading, segments, navigationState?.key]);
 
-  if (isLoading) {
+  if (isLoading || !navigationState?.key) {
     return <ActivityIndicator style={{ flex: 1 }} size={"large"} />;
   }
 
