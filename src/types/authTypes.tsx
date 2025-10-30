@@ -1,3 +1,5 @@
+import { UsuarioResponse } from "./usuarioTypes";
+
 export type UsuarioLoginData = {
   email: string;
   senha: string;
@@ -5,6 +7,7 @@ export type UsuarioLoginData = {
 
 export type LoginResponse = {
   token: string;
+  usuario: UsuarioResponse;
 }
 
 export type UsuarioCadastroData = {
@@ -16,4 +19,5 @@ export type UsuarioCadastroData = {
 
 export type CadastroResponse = {
   token: string;
+  usuario: UsuarioResponse;
 }

@@ -4,7 +4,7 @@ import { MedicamentoHistoricoResumoResponse } from "./medicamentoHistoricoTypes"
 import { TratamentoResumoResponse } from "./tratamentoTypes";
 import { UsuarioResumoResponse } from "./usuarioTypes";
 
-export type AgendamentoData = {
+export type AgendamentoResponse = {
   id: number;
   horarioDoAgendamento: Date;
   tipoDeAlerta: TipoDeAlerta;
