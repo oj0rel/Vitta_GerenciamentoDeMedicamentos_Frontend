@@ -5,7 +5,8 @@ import { useSession } from "@/src/contexts/authContext";
 import { router } from "expo-router";
 import { useState } from "react";
 import { Alert, ScrollView, View } from "react-native";
-import { styles } from "../cadastroScreen/styles";
+import Wave from "react-native-waves";
+import { styles } from "./styles";
 
 export default function LoginScreen() {
   const { signIn } = useSession();
@@ -29,36 +30,47 @@ export default function LoginScreen() {
 
   return (
     <ScrollView
-      style={{ flex: 1, marginTop: 30, marginBottom: 40 }}
+      style={{ flex: 1, marginTop: 30, }}
       contentContainerStyle={styles.container}
     >
-      <LogoComponent />
 
-      <View style={styles.formBox}>
-        <View style={styles.formBody}>
+      <View style={styles.screenContent}>
+        <LogoComponent />
 
-          <FormInput
-            titulo="Email"
-            value={email}
-            onChangeText={setEmail}
-            placeHolder="Digite seu email: ..@gmail.com"
-          />
+        <View style={styles.formBox}>
+          <View style={styles.formBody}>
 
-          <FormInput
-              titulo="Senha"
-              value={senha}
-              onChangeText={setSenha}
-              placeHolder="Digite uma senha"
-              secureTextEntry
+            <FormInput
+              titulo="Email"
+              value={email}
+              onChangeText={setEmail}
+              placeHolder="Digite seu email: ..@gmail.com"
             />
 
+            <FormInput
+                titulo="Senha"
+                value={senha}
+                onChangeText={setSenha}
+                placeHolder="Digite uma senha"
+                secureTextEntry
+              />
+
+          </View>
         </View>
+
+        <ActionButton 
+          titulo="LOGIN"
+          onPress={ handleLogin }
+        />
       </View>
 
-      <ActionButton 
-        titulo="LOGIN"
-        onPress={ handleLogin }
-      />
+      <Wave
+        placement="bottom"
+        gap={80}
+        speed={4}
+        maxPoints={5}
+        delta={36}
+        color="#1CBDCF" />
     </ScrollView>
   );
 }
