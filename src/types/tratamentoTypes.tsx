@@ -3,6 +3,7 @@ import { MedicamentoResumoResponse } from "./medicamentoTypes";
 
 export type TratamentoResumoResponse = {
   id: number;
+  nome: string;
   dataDeInicio: Date;
   dataDeTermino: Date;
   status: TratamentoStatus;

@@ -2,8 +2,11 @@ import { listarAgendamentos } from "@/src/api/agendamentoApi";
 import { ActionButton } from "@/src/components/actionButton/actionButton";
 import { AuthContext, useSession } from "@/src/contexts/authContext";
 import { AgendamentoResponse } from "@/src/types/agendamentoTypes";
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 import { useContext, useEffect, useState } from "react";
-import { FlatList, Text, View } from "react-native";
+import { FlatList, Pressable, ScrollView, Text, View } from "react-native";
+import { styles } from "./styles";
 
 export default function HomeScreen() {
   
@@ -43,29 +46,67 @@ export default function HomeScreen() {
 
 
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
-      
-      <Text style={{ marginTop: 40, color: 'gray' }}>
-        Token: {session}
-      </Text>
+    <ScrollView
+      style={{ flex: 1, padding: 20 }}
+      >
 
-      <FlatList
+      <View>
+
+        <Text
+          style={styles.headerTextFlatList}>
+          SEUS AGENDAMENTOS
+        </Text>
+        
+        <FlatList
         data={agendamentos}
         keyExtractor={ (item) => item.id.toString() }
         renderItem={({ item }) => (
-          <View>
-            <Text>Medicamento do agendamento: {item.tratamento.medicamento.nome}</Text>
+
+          <View style={styles.cardsContainer}>
+            <View style={styles.cardContent}>
+
+              <View>
+                <Text style={[styles.textContent, { fontSize: 16 }]}>
+                  {item.tratamento.nome}
+                </Text>
+
+                <Text style={[styles.textContent, { fontSize: 13 }]}>
+                  Medicamento: {item.tratamento.medicamento.nome}
+                </Text>
+
+                <Pressable style={styles.concluirPressable}>
+                  <Text style={styles.textPressableContent}>
+                    CONCLUIR
+                  </Text>
+                </Pressable>
+              </View>
+
+              <View>
+                <Text style={[styles.textContent, {fontWeight: 'bold', fontSize: 18}]}>
+                  {format(item.horarioDoAgendamento, 'HH:mm', {
+                    locale: ptBR
+                  })}
+                </Text>
+              </View>
+
+            </View>
+
           </View>
         )}
       />
       
-      <ActionButton
-        titulo="SAIR (LOGOUT)"
-        onPress={() => {
-          signOut();
-        }}
-      />
+      <View style={styles.button}>
+        <ActionButton
+          titulo="SAIR (LOGOUT)"
+          onPress={() => {
+            signOut();
+          }}
+        />
+      </View>
 
-    </View>
+      </View>
+      
+
+    </ScrollView>
   );
 }
