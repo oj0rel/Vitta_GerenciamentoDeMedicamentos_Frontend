@@ -1,4 +1,4 @@
-import { Text, TextInput, View } from "react-native";
+import { KeyboardTypeOptions, Text, TextInput, View } from "react-native";
 import { styles } from "./styles";
 
 type FormInputProps = {
@@ -7,9 +7,11 @@ type FormInputProps = {
     onChangeText?: ((text: string) => void) | undefined
     placeHolder: string;
     secureTextEntry?: true;
+    keyboardType?: KeyboardTypeOptions;
+    autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
 };
 
-export const FormInput = ({ titulo, value, onChangeText, placeHolder, secureTextEntry }: FormInputProps) => {
+export const FormInput = ({ titulo, value, onChangeText, placeHolder, secureTextEntry, keyboardType, autoCapitalize }: FormInputProps) => {
   return (
     <View style={styles.formRequestBody}>
         <Text style={styles.tittle}>{titulo}</Text>
@@ -19,6 +21,8 @@ export const FormInput = ({ titulo, value, onChangeText, placeHolder, secureText
           onChangeText={ onChangeText }
           placeholder={ placeHolder }
           secureTextEntry={ secureTextEntry }
+          keyboardType={ keyboardType }
+          autoCapitalize={ autoCapitalize }
         />
     </View>
   );

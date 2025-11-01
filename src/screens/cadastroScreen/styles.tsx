@@ -21,7 +21,19 @@ export const styles = StyleSheet.create({
     gap: 1,
     padding: 20,
   },
-  formRequestBody: {
-    marginBottom: 14
+  errorContainer: {
+    width: '100%',
+    backgroundColor: '#FFDEDE',
+    padding: 10,
+    borderRadius: 8,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#D8000C',
+  },
+  errorText: {
+    color: '#D8000C',
+    fontSize: 14,
+    fontWeight: '500',
+    textAlign: 'center',
   },
 });
