@@ -34,6 +34,10 @@ export default function LoginScreen() {
     return null;
   }
 
+  const backToIndex = async () => {
+    router.replace('/');
+  }
+
   const handleLogin = async () => {
 
     setErrorMessage(null);
@@ -107,6 +111,11 @@ export default function LoginScreen() {
 
           </View>
         </View>
+
+        <ActionButton 
+          titulo="VOLTAR"
+          onPress={ backToIndex }
+        />
 
         <ActionButton 
           titulo="LOGIN"

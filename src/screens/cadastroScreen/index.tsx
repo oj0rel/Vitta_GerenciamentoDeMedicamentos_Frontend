@@ -41,6 +41,10 @@ export default function CadastroScreen() {
 
     return null;
   }
+
+  const backToIndex = async () => {
+    router.replace('/');
+  }
   
   const handleCadastro = async () => {
 
@@ -148,6 +152,11 @@ export default function CadastroScreen() {
 
           </View>
         </View>
+
+        <ActionButton
+            titulo="VOLTAR"
+            onPress={ backToIndex }
+        />
 
         <ActionButton
             titulo="CADASTRAR"
