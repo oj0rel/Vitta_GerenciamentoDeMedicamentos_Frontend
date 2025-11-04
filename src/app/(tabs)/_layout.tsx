@@ -10,7 +10,7 @@ export default function TabsRootLayout() {
 
   return (
     <Stack>
-      <Stack.Screen name="home" options={{ title: "Tela Inicial" }} />
+      <Stack.Screen name="home" options={{ title: "Tela Inicial", headerShown: false }} />
     </Stack>
   )
 }

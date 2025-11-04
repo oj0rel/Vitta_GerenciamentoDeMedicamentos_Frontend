@@ -4,6 +4,7 @@ import React, { useMemo } from 'react';
 import { View } from 'react-native';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
 import { MarkedDates } from 'react-native-calendars/src/types';
+import { styles } from './styles';
 
 LocaleConfig.locales['pt-br'] = {
   monthNames: [
@@ -37,35 +38,37 @@ const Calendario: React.FC<CalendarioProps> = ({
       const dateString = format(new Date(agendamento.horarioDoAgendamento), 'yyyy-MM-dd');
       marks[dateString] = {
         marked: true,
-        dotColor: 'blue',
+        dotColor: '#1CBDCF',
         selected: dateString === diaSelecionado
       };
     });
 
     if (diaSelecionado && !marks[diaSelecionado]) {
-      marks[diaSelecionado] = { selected: true, selectedColor: '#007bff' };
+      marks[diaSelecionado] = { selected: true, selectedColor: '#1CBDCF' };
     }
 
     return marks;
   }, [agendamentos, diaSelecionado]);
 
   return (
-    <View style={{ width: 350 ,height: 350 ,marginHorizontal:10, marginBottom: 40}}>
-      <Calendar
-        markedDates={markedDates}
-        onDayPress={(day) => {
-          onDiaPressionado(day.dateString);
-        }}
-        onMonthChange={(month) => {
-          onMesMudou(new Date(month.timestamp));
-        }}
+    <View style={styles.containerExternoCalendario}>
+      <View style={styles.containerInternoCalendario}>
+        <Calendar
+          markedDates={markedDates}
+          onDayPress={(day) => {
+            onDiaPressionado(day.dateString);
+          }}
+          onMonthChange={(month) => {
+            onMesMudou(new Date(month.timestamp));
+          }}
 
-        theme={{
-          todayTextColor: '#007bff',
-          arrowColor: '#007bff',
-          selectedDayBackgroundColor: '#007bff',
-        }}
-      />
+          theme={{
+            todayTextColor: '#1CBDCF',
+            arrowColor: '#1CBDCF',
+            selectedDayBackgroundColor: '#1CBDCF',
+          }}
+        />
+      </View>
     </View>
   );
 }
