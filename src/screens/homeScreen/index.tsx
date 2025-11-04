@@ -3,10 +3,10 @@ import { ActionButton } from "@/src/components/actionButton/actionButton";
 import Calendario from "@/src/components/agendaCalendar";
 import { AuthContext, useSession } from "@/src/contexts/authContext";
 import { AgendamentoResponse } from "@/src/types/agendamentoTypes";
-import { format } from 'date-fns';
+import { endOfMonth, format, isWithinInterval, startOfMonth } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { useContext, useEffect, useMemo, useState } from "react";
-import { FlatList, Pressable, ScrollView, Text, View } from "react-native";
+import { useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { FlatList, Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./styles";
 
@@ -17,35 +17,31 @@ export default function HomeScreen() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const [agendamentosDoMes, setAgendamentosDoMes] = useState<AgendamentoResponse[]>([]);
+  const [diaSelecionado, setDiaSelecionado] = useState<string | null>(null);
+  const [mesVisivel, setMesVisivel] = useState(new Date());
+
   const { usuario } = useContext(AuthContext);
-  const usuarioId = usuario?.id;
-
-  const { dataInicioFormatada, dataFimFormatada } = useMemo(() => {
-    const primeiroDiaFiltro = new Date();
-    const ultimoDiaFiltro = new Date();
-    ultimoDiaFiltro.setDate(primeiroDiaFiltro.getDate() + 4); //a data do último dia do filtro será a de hoje + 4 (1 semana).
-
-    const inicio = formatarData(primeiroDiaFiltro);
-    const fim = formatarData(ultimoDiaFiltro);
-
-    return { dataInicioFormatada: inicio, dataFimFormatada: fim } ;
-  }, []);
-
+  
   useEffect(() => {
-
     if (!loading) {
       return;
     }
 
-    const carregarAgendamentos = async () => {
-      
+    const carregarAgendamentosDoMes = async () => {
       if (session) {
         try {
           setError(null);
 
-          const data = await listarAgendamentos(session, dataInicioFormatada, dataInicioFormatada); //mostrando somente os agendamentos de hoje
-          
-          setAgendamentos(data);
+          const inicioDoMes = startOfMonth(mesVisivel);
+          const fimDoMes = endOfMonth(mesVisivel);
+
+          const dataInicio = formatarData(inicioDoMes);
+          const dataFim = formatarData(fimDoMes);
+
+          const data = await listarAgendamentos(session, dataInicio, dataFim);
+
+          setAgendamentosDoMes(data);
         } catch (error) {
           setError("Falha ao carregar agendamentos.");
           console.error(error);
@@ -58,30 +54,56 @@ export default function HomeScreen() {
       }
     };
 
-    carregarAgendamentos();
-    
-  }, [session, dataInicioFormatada, loading]);
+    carregarAgendamentosDoMes();
+  }, [session, mesVisivel, loading])
+
+  const agendamentosParaExibir = useMemo(() => {
+    if (diaSelecionado) {
+      return agendamentosDoMes.filter(ag => {
+        const diaDoAgendamento = format(new Date(ag.horarioDoAgendamento), 'yyyy-MM-dd');
+        return diaDoAgendamento === diaSelecionado;
+      });
+    }
+
+    const hoje = new Date();
+    const dataFimFiltro = new Date();
+    dataFimFiltro.setDate(hoje.getDate() + 4);
+
+    return agendamentosDoMes.filter(ag => {
+      const dataDoAgendamento = new Date(ag.horarioDoAgendamento);
+      return isWithinInterval(dataDoAgendamento, { start: hoje, end: dataFimFiltro });
+    });
+  }, [diaSelecionado, agendamentosDoMes]);
+
+  const handleDiaPressionado = useCallback((dia: string) => {
+    if (dia === diaSelecionado) {
+      setDiaSelecionado(null);
+    } else {
+      setDiaSelecionado(dia);
+    };
+  }, [diaSelecionado]);
+
+  const handleMesMudou = useCallback((novoMes: Date) => {
+    setMesVisivel(novoMes);
+    setLoading(true);
+    setDiaSelecionado(null);
+  }, []);
 
 
   return (
 
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1, alignItems: 'center' }}>
 
-      <Calendario agendamentos={agendamentos} />
-    
-      <ScrollView
-        style={{ padding: 20 }}
-        >
-
-        <View>
-
-          <Text
-            style={styles.headerTextFlatList}>
-            SEUS AGENDAMENTOS
-          </Text>
+      <Calendario
+        agendamentos={agendamentosDoMes}
+        diaSelecionado={diaSelecionado}
+        onDiaPressionado={handleDiaPressionado}
+        onMesMudou={handleMesMudou}
+      />
           
           <FlatList
-          data={agendamentos}
+          style={{ flex: 1, paddingHorizontal: 20 }}
+          data={agendamentosParaExibir}
           keyExtractor={ (item) => item.id.toString() }
           renderItem={({ item }) => (
 
@@ -116,21 +138,29 @@ export default function HomeScreen() {
 
             </View>
           )}
+
+          ListHeaderComponent={
+            <Text style={styles.headerTextFlatList}>
+              {
+                diaSelecionado
+                ? `AGENDAMENTOS PARA ${format(new Date(diaSelecionado + 'T00:00:00'), 'dd/MM/yyyy', { locale: ptBR })}`
+                : 'SEUS PRÓXIMOS AGENDAMENTOS'
+              }
+            </Text>
+          }
+
+          ListFooterComponent={
+            <View style={[styles.button, { marginTop: 20 }]}>
+              <ActionButton
+                titulo="SAIR (LOGOUT)"
+                onPress={() => {
+                  signOut();
+                }}
+              />
+
+            </View>
+          }
         />
-        
-        <View style={styles.button}>
-          <ActionButton
-            titulo="SAIR (LOGOUT)"
-            onPress={() => {
-              signOut();
-            }}
-          />
-        </View>
-
-        </View>
-        
-
-      </ScrollView>
 
     </SafeAreaView>
   );
