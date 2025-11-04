@@ -1,5 +1,5 @@
 import { UsuarioCadastroData, UsuarioLoginData } from "@/src/types/authTypes";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { usuarioCadastro, usuarioLogin } from "../api/usuarioApi";
 import { useStorageState } from "../hooks/useStorageState";
 import { UsuarioResponse } from "../types/usuarioTypes";
@@ -35,7 +35,7 @@ export function useSession() {
 }
 
 export function SessionProvider(props: React.PropsWithChildren) {
-  const [[isLoading, session], setSession] = useStorageState("session"); // -> essa linha salva o token no disco
+  const [[isLoading, session], setSession] = useStorageState("session");
   const [usuario, setUsuario] = useState<UsuarioResponse | null>(null);
 
   useEffect(() => {
@@ -44,45 +44,51 @@ export function SessionProvider(props: React.PropsWithChildren) {
     }
   }, [session])
 
+  const signUp = useCallback(async (data: UsuarioCadastroData) =>{
+    try {
+      const response = await usuarioCadastro(data)
+        if (response.token && response.usuario) {
+          setUsuario(response.usuario);
+          setSession(response.token);
+        }
+      } catch (error) {
+          console.error("Erro no signUp: ", error);
+          throw error;
+    }
+  }, [setSession, setUsuario]);
+
+  const signIn = useCallback(async (data: UsuarioLoginData) => {
+    try {
+      const response = await usuarioLogin(data);
+      if (response.token && response.usuario) {
+        setUsuario(response.usuario);
+        setSession(response.token);
+      }
+    } catch (error) {
+      console.error("Erro no signIn: ", error);
+      throw error;
+    }
+  }, [setSession, setUsuario]);
+
+  const signOut = useCallback(() => {
+    setSession(null);
+    setUsuario(null);
+  }, [setSession, setUsuario]);
+
+  const providerValue = useMemo(() => ({
+    signUp,
+    signIn,
+    signOut,
+    session,
+    isLoading,
+    usuario
+  }), [signUp, signIn, signOut, session, isLoading, usuario]);
+
   return (
-    <AuthContext.Provider
-      value={{
-        signUp: async(data: UsuarioCadastroData) => {
-          try {
-            const response = await usuarioCadastro(data);
-
-            if (response.token && response.usuario) {
-              setUsuario(response.usuario);
-              setSession(response.token);
-            }
-          } catch (error) {
-            console.error("Erro no signUp:", error);
-            throw error;
-          }
-        },
-        signIn: async (data: UsuarioLoginData) => {
-          try {
-            const response = await usuarioLogin(data);
-
-            if (response.token && response.usuario) {
-              setUsuario(response.usuario);
-              setSession(response.token);
-            }
-          } catch (error) {
-            console.error("Erro no signIn:", error);
-            throw error;
-          }
-        },
-        signOut: () => {
-          setSession(null);
-          setUsuario(null);
-        },
-        session,
-        isLoading,
-        usuario
-      }}
+    <AuthContext
+      value={providerValue}
     >
       {props.children}
-    </AuthContext.Provider>
+    </AuthContext>
   )
 }

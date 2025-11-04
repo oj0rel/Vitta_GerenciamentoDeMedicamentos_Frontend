@@ -1,11 +1,13 @@
 import { formatarData, listarAgendamentos } from "@/src/api/agendamentoApi";
 import { ActionButton } from "@/src/components/actionButton/actionButton";
+import Calendario from "@/src/components/agendaCalendar";
 import { AuthContext, useSession } from "@/src/contexts/authContext";
 import { AgendamentoResponse } from "@/src/types/agendamentoTypes";
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { FlatList, Pressable, ScrollView, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./styles";
 
 export default function HomeScreen() {
@@ -18,14 +20,23 @@ export default function HomeScreen() {
   const { usuario } = useContext(AuthContext);
   const usuarioId = usuario?.id;
 
-  const primeiroDiaFiltro = new Date();
-  const ultimoDiaFiltro = new Date();
-  ultimoDiaFiltro.setDate(primeiroDiaFiltro.getDate() + 4); //a data do último dia do filtro será a de hoje + 4 (1 semana).
+  const { dataInicioFormatada, dataFimFormatada } = useMemo(() => {
+    const primeiroDiaFiltro = new Date();
+    const ultimoDiaFiltro = new Date();
+    ultimoDiaFiltro.setDate(primeiroDiaFiltro.getDate() + 4); //a data do último dia do filtro será a de hoje + 4 (1 semana).
 
-  const dataInicioFormatada = formatarData(primeiroDiaFiltro);
-  const dataFimFormatada = formatarData(ultimoDiaFiltro);
+    const inicio = formatarData(primeiroDiaFiltro);
+    const fim = formatarData(ultimoDiaFiltro);
+
+    return { dataInicioFormatada: inicio, dataFimFormatada: fim } ;
+  }, []);
 
   useEffect(() => {
+
+    if (!loading) {
+      return;
+    }
+
     const carregarAgendamentos = async () => {
       
       if (session) {
@@ -49,71 +60,78 @@ export default function HomeScreen() {
 
     carregarAgendamentos();
     
-  }, [session]);
+  }, [session, dataInicioFormatada, loading]);
 
 
   return (
-    <ScrollView
-      style={{ flex: 1, padding: 20 }}
-      >
 
-      <View>
+    <SafeAreaView style={{ flex: 1 }}>
 
-        <Text
-          style={styles.headerTextFlatList}>
-          SEUS AGENDAMENTOS
-        </Text>
-        
-        <FlatList
-        data={agendamentos}
-        keyExtractor={ (item) => item.id.toString() }
-        renderItem={({ item }) => (
+      <Calendario agendamentos={agendamentos} />
+    
+      <ScrollView
+        style={{ padding: 20 }}
+        >
 
-          <View style={styles.cardsContainer}>
-            <View style={styles.cardContent}>
+        <View>
 
-              <View>
-                <Text style={[styles.textContent, { fontSize: 16 }]}>
-                  {item.tratamento.nome}
-                </Text>
+          <Text
+            style={styles.headerTextFlatList}>
+            SEUS AGENDAMENTOS
+          </Text>
+          
+          <FlatList
+          data={agendamentos}
+          keyExtractor={ (item) => item.id.toString() }
+          renderItem={({ item }) => (
 
-                <Text style={[styles.textContent, { fontSize: 13 }]}>
-                  Medicamento: {item.tratamento.medicamento.nome}
-                </Text>
+            <View style={styles.cardsContainer}>
+              <View style={styles.cardContent}>
 
-                <Pressable style={styles.concluirPressable}>
-                  <Text style={styles.textPressableContent}>
-                    CONCLUIR
+                <View>
+                  <Text style={[styles.textContent, { fontSize: 16 }]}>
+                    {item.tratamento.nome}
                   </Text>
-                </Pressable>
-              </View>
 
-              <View>
-                <Text style={[styles.textContent, {fontWeight: 'bold', fontSize: 18}]}>
-                  {format(item.horarioDoAgendamento, 'HH:mm', {
-                    locale: ptBR
-                  })}
-                </Text>
+                  <Text style={[styles.textContent, { fontSize: 13 }]}>
+                    Medicamento: {item.tratamento.medicamento.nome}
+                  </Text>
+
+                  <Pressable style={styles.concluirPressable}>
+                    <Text style={styles.textPressableContent}>
+                      CONCLUIR
+                    </Text>
+                  </Pressable>
+                </View>
+
+                <View>
+                  <Text style={[styles.textContent, {fontWeight: 'bold', fontSize: 18}]}>
+                    {format(item.horarioDoAgendamento, 'HH:mm', {
+                      locale: ptBR
+                    })}
+                  </Text>
+                </View>
+
               </View>
 
             </View>
-
-          </View>
-        )}
-      />
-      
-      <View style={styles.button}>
-        <ActionButton
-          titulo="SAIR (LOGOUT)"
-          onPress={() => {
-            signOut();
-          }}
+          )}
         />
-      </View>
+        
+        <View style={styles.button}>
+          <ActionButton
+            titulo="SAIR (LOGOUT)"
+            onPress={() => {
+              signOut();
+            }}
+          />
+        </View>
 
-      </View>
-      
+        </View>
+        
 
-    </ScrollView>
+      </ScrollView>
+
+    </SafeAreaView>
   );
 }
