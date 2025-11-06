@@ -43,6 +43,23 @@ const Calendario: React.FC<CalendarioProps> = ({
       };
     });
 
+    const todayString = format(new Date(), 'yyyy-MM-dd');
+    const todayStyles = {
+      customStyles: {
+        container: {
+          backgroundColor: 'transparent',
+          borderWidth: 1,
+          borderColor: '#1CBDCF',
+          borderRadius: 16,
+        },
+        text: {
+          color: '#1CBDCF',
+          fontWeight: 'bold',
+        },
+      },
+    };
+    
+
     if (diaSelecionado && !marks[diaSelecionado]) {
       marks[diaSelecionado] = { selected: true, selectedColor: '#1CBDCF' };
     }
@@ -63,9 +80,28 @@ const Calendario: React.FC<CalendarioProps> = ({
           }}
 
           theme={{
-            todayTextColor: '#1CBDCF',
             arrowColor: '#1CBDCF',
             selectedDayBackgroundColor: '#1CBDCF',
+
+            stylesheet: {
+              day: {
+                basic: {
+                  today: {
+                    container: {
+                      backgroundColor: 'transparent',
+                      borderWidth: 1,
+                      borderColor: '#1CBDCF',
+                      borderRadius: 16,
+                    },
+
+                    text: {
+                      color: '#1CBDCF',
+                      fontWeight: 'bold',
+                    }
+                  }
+                }
+              }
+            }
           }}
         />
       </View>

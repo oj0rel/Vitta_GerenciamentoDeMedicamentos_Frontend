@@ -3,7 +3,13 @@ import { useSession } from "@/src/contexts/authContext";
 import { MedicamentoResponse } from "@/src/types/medicamentoTypes";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  FlatList,
+  Pressable,
+  Text,
+  View,
+} from "react-native";
 import { styles } from "./styles";
 
 export default function MedicamentoScreen() {
@@ -42,54 +48,60 @@ export default function MedicamentoScreen() {
         <ActivityIndicator size="large" color="#0000ff" />
         <Text>Carregando...</Text>
       </View>
-    )
+    );
   }
 
   if (error) {
     return (
       <View style={styles.container}>
-        <Text style={{ color: 'red' }}>{error}</Text>
+        <Text style={{ color: "red" }}>{error}</Text>
       </View>
     );
   }
 
-  return(
+  return (
     <View style={styles.container}>
-      <Text>
-        Tela dos Medicamentos
-      </Text>
+      <Text>Tela dos Medicamentos</Text>
 
       <FlatList
-        style={{ flex: 1, }}
+        style={styles.flatList}
         data={medicamentos}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <View style={styles.cardsContainer}>
             <View style={styles.cardContent}>
-              
-              <View style={{marginLeft: 14}}>
-                <MaterialCommunityIcons name="pill" size={36} color="white" />
+              <View style={styles.cardTopRow}>
+                <View>
+                  <MaterialCommunityIcons name="pill" size={36} color="white" />
+                </View>
+
+                <View>
+                  <Text style={[styles.textContent, { fontSize: 16 }]}>
+                    Medicamento: {item.nome}
+                  </Text>
+
+                  <Text style={[styles.textContent, { fontSize: 16 }]}>
+                    Laboratório: {item.laboratorio}
+                  </Text>
+
+                  <Text style={[styles.textContent, { fontSize: 16 }]}>
+                    Tipo: {item.tipoUnidadeDeMedida}
+                  </Text>
+                </View>
               </View>
 
-              <View style={{marginRight: 14}}>
+              <View style={styles.cardBottomRow}>
+                <Pressable style={styles.pressableButton}>
+                  <MaterialCommunityIcons name="pencil" size={24} color="black" />
+                </Pressable>
 
-                <Text style={[styles.textContent, { fontSize: 16 }]}>
-                  Medicamento: {item.nome}
-                </Text>
-
-                <Text style={[styles.textContent, { fontSize: 16 }]}>
-                  Laboratório: {item.laboratorio}
-                </Text>
-
-                <Text style={[styles.textContent, { fontSize: 16 }]}>
-                  Tipo: {item.tipoUnidadeDeMedida}
-                </Text>
-
+                <Pressable style={styles.pressableButton}>
+                  <MaterialCommunityIcons name="trash-can" size={24} color="black" />
+                </Pressable>
               </View>
             </View>
           </View>
         )}
-
         ListEmptyComponent={
           <View style={styles.container}>
             <Text>Nenhum medicamento cadastrado.</Text>

@@ -6,19 +6,21 @@ export const styles = StyleSheet.create ({
     alignItems: "center",
     justifyContent: "center",
   },
+  flatList: {
+    flex: 1,
+    margin: 10,
+  },
   cardsContainer: {
     justifyContent: "center",
-    alignItems: "center",
   },
   cardContent: {
     backgroundColor: '#1CBDCF',
     margin: 14,
     borderRadius: 10,
     width: 350,
-    height: 100,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    height: 130,
+    justifyContent: "space-between",
+    paddingVertical: 10,
   },
   textContent: {
     color: '#fff',
@@ -27,5 +29,28 @@ export const styles = StyleSheet.create ({
   },
   textPressableContent: {
     color: '#1CBDCF',
+  },
+  cardTopRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    width: '100%',
+    justifyContent: "space-between",
+    paddingHorizontal: 14,
+  },
+  cardBottomRow: {
+    alignItems: "center",
+    flexDirection: "row",
+    gap: 10,
+    alignSelf: "flex-end", 
+    marginRight: 14,
+    
+  },
+  pressableButton: {
+    backgroundColor: '#fff',
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 20,
+    width: 50,
+    height: 30,
   },
 });
