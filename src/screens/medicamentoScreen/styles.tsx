@@ -5,10 +5,12 @@ export const styles = StyleSheet.create ({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+    paddingTop: 40,
   },
   flatList: {
     flex: 1,
     margin: 10,
+    width: "100%",
   },
   cardsContainer: {
     justifyContent: "center",
@@ -18,7 +20,7 @@ export const styles = StyleSheet.create ({
     margin: 14,
     borderRadius: 10,
     width: 350,
-    height: 130,
+    // height: 130,
     justifyContent: "space-between",
     paddingVertical: 10,
   },
@@ -34,7 +36,7 @@ export const styles = StyleSheet.create ({
     flexDirection: "row",
     alignItems: "center",
     width: '100%',
-    justifyContent: "space-between",
+    justifyContent: "flex-start",
     paddingHorizontal: 14,
   },
   cardBottomRow: {
@@ -52,5 +54,10 @@ export const styles = StyleSheet.create ({
     borderRadius: 20,
     width: 50,
     height: 30,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'flex-end', // Joga o modal para baixo
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Fundo escurecido
   },
 });

@@ -2,6 +2,7 @@ import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
     pressable: {
+        flexDirection: "row",
         justifyContent: "center",
         alignItems: "center",
         backgroundColor: '#1CBDCF',
