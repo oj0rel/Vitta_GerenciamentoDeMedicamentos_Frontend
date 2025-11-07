@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { Pressable, Text } from "react-native";
+import { Pressable, StyleProp, Text, ViewStyle } from "react-native";
 import { styles } from "./syles";
 
 type ActionButtonProps = {
@@ -7,13 +7,14 @@ type ActionButtonProps = {
     onPress: () => void;
     disabled?: boolean;
     icon?: ReactNode;
+    style?: StyleProp<ViewStyle>;
 }
 
-export const ActionButton = ( { onPress, titulo, disabled, icon }: ActionButtonProps ) => {
+export const ActionButton = ( { onPress, titulo, disabled, icon, style }: ActionButtonProps ) => {
 
     return (
         <Pressable
-        style={styles.pressable}
+        style={[styles.pressable, style]}
         onPress={ onPress }
         disabled={ disabled }
         >
