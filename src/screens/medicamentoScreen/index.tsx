@@ -1,5 +1,7 @@
 import { listarMedicamentos, medicamentoDeletar } from "@/src/api/medicamentoApi";
 import { ActionButton } from "@/src/components/actionButton/actionButton";
+import { AlertModal } from "@/src/components/alertModal";
+import { DeletePressable } from "@/src/components/deletePressable";
 import FormularioCadastroMedicamento from "@/src/components/formMedicamento";
 import { useSession } from "@/src/contexts/authContext";
 import { MedicamentoResponse } from "@/src/types/medicamentoTypes";
@@ -7,12 +9,11 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
-  Alert,
   FlatList,
   Modal,
   Pressable,
   Text,
-  View,
+  View
 } from "react-native";
 import { styles } from "./styles";
 
@@ -23,6 +24,9 @@ export default function MedicamentoScreen() {
   const [error, setError] = useState<string | null>(null);
 
   const [modalVisivel, setModalVisivel] = useState(false);
+
+  const [alertVisivel, setAlertVisivel] = useState(false);
+  const [itemParaDeletar, setItemParaDeletar] = useState<number | null>(null);
 
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -72,26 +76,36 @@ export default function MedicamentoScreen() {
   };
 
   const handleDeletarMedicamento = (medicamentoId: number) => {
+    console.log("FUNÇÃO handleDeletarMedicamento FOI CHAMADA");
     if (isDeleting) {
+      console.log("Retornando porque isDeleting é true");
       return;
     }
 
-    Alert.alert(
-      "CONFIRMAR EXCLUSÃO",
-      "Tem certeza que deseja excluir este medicamento ?",
-      [
-        {
-          text: "Cancelar",
-          style: "cancel",
-        },
-        {
-          text: "Excluir",
-          onPress: () => executarDelete(medicamentoId),
-          style: "destructive",
-        },
-      ]
-    )
+    setItemParaDeletar(medicamentoId);
+    setAlertVisivel(true);
   }
+
+  const onConfirmarDelete = () => {
+    // Se não tiver um item selecionado, não faz nada
+    if (itemParaDeletar === null) {
+      setAlertVisivel(false);
+      return;
+    }
+
+    // Chama sua função de deletar que já funciona
+    executarDelete(itemParaDeletar);
+
+    // Limpa o estado
+    setAlertVisivel(false);
+    setItemParaDeletar(null);
+  };
+
+  // CRIE A FUNÇÃO para o botão "Cancelar" do AlertModal
+  const onCancelarDelete = () => {
+    setAlertVisivel(false);
+    setItemParaDeletar(null);
+  };
 
   if (loading) {
     return (
@@ -115,6 +129,7 @@ export default function MedicamentoScreen() {
       <Text>Tela dos Medicamentos</Text>
 
       <ActionButton
+        style={{ width: 320 }}
         titulo="ADICIONAR MEDICAMENTO"
         onPress={() => setModalVisivel(true)}
         icon={<MaterialCommunityIcons name="plus-circle" size={36} color="white" />}
@@ -141,7 +156,7 @@ export default function MedicamentoScreen() {
         data={medicamentos}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
-          // <View style={styles.cardsContainer}>
+          <View style={styles.cardsContainer}>
             <View style={styles.cardContent}>
               <View style={styles.cardTopRow}>
                 <View>
@@ -171,23 +186,30 @@ export default function MedicamentoScreen() {
                   <MaterialCommunityIcons name="pencil" size={24} color="black" />
                 </Pressable>
 
-                <Pressable
-                  style={styles.pressableButton}
-                  // onPress={() => handleDeletarMedicamento(item.id)}
-                  onPress={() => Alert.alert("TESTE LIXEIRA")}
+                <DeletePressable
+                  onPress={() => handleDeletarMedicamento(item.id)}
                   disabled={isDeleting}
-                >
-                  <MaterialCommunityIcons name="trash-can" size={24} color="black" />
-                </Pressable>
+                />
+          
               </View>
             </View>
-          // </View>
+          </View>
         )}
         ListEmptyComponent={
           <View style={styles.container}>
             <Text>Nenhum medicamento cadastrado.</Text>
           </View>
         }
+      />
+
+      <AlertModal
+        visible={alertVisivel}
+        title="CONFIRMAR EXCLUSÃO"
+        message="Tem certeza que deseja excluir este medicamento ?"
+        onClose={onCancelarDelete}
+        onConfirm={onConfirmarDelete}
+        confirmText="Excluir"
+        isDestructive={true}
       />
     </View>
   );

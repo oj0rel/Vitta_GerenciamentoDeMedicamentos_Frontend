@@ -20,7 +20,6 @@ export const styles = StyleSheet.create ({
     margin: 14,
     borderRadius: 10,
     width: 350,
-    // height: 130,
     justifyContent: "space-between",
     paddingVertical: 10,
   },
