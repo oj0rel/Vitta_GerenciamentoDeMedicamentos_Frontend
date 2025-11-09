@@ -59,4 +59,9 @@ export const styles = StyleSheet.create ({
     justifyContent: 'flex-end', // Joga o modal para baixo
     backgroundColor: 'rgba(0, 0, 0, 0.5)', // Fundo escurecido
   },
+  title: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginTop: 20,
+  },
 });

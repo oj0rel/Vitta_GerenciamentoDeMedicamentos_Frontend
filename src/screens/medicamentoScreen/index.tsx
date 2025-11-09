@@ -2,7 +2,7 @@ import { listarMedicamentos, medicamentoDeletar } from "@/src/api/medicamentoApi
 import { ActionButton } from "@/src/components/actionButton/actionButton";
 import { AlertModal } from "@/src/components/alertModal";
 import { DeletePressable } from "@/src/components/deletePressable";
-import FormularioCadastroMedicamento from "@/src/components/formMedicamento";
+import FormularioMedicamento from "@/src/components/formMedicamento";
 import { useSession } from "@/src/contexts/authContext";
 import { MedicamentoResponse } from "@/src/types/medicamentoTypes";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -29,6 +29,8 @@ export default function MedicamentoScreen() {
   const [itemParaDeletar, setItemParaDeletar] = useState<number | null>(null);
 
   const [isDeleting, setIsDeleting] = useState(false);
+
+  const [itemEmEdicao, setItemEmEdicao] = useState<MedicamentoResponse | null>(null);
 
   const carregarMedicamentosCadastrados = useCallback(async () => {
     if (!session) return;
@@ -87,24 +89,34 @@ export default function MedicamentoScreen() {
   }
 
   const onConfirmarDelete = () => {
-    // Se não tiver um item selecionado, não faz nada
+    // se não tiver um item selecionado, não faz nada
     if (itemParaDeletar === null) {
       setAlertVisivel(false);
       return;
     }
 
-    // Chama sua função de deletar que já funciona
+    // chama função de deletar que já funciona
     executarDelete(itemParaDeletar);
 
-    // Limpa o estado
+    // limpa o estado
     setAlertVisivel(false);
     setItemParaDeletar(null);
   };
 
-  // CRIE A FUNÇÃO para o botão "Cancelar" do AlertModal
+  // função para o botão "Cancelar" do AlertModal
   const onCancelarDelete = () => {
     setAlertVisivel(false);
     setItemParaDeletar(null);
+  };
+
+  const abrirModalCadastro = () => {
+    setItemEmEdicao(null);
+    setModalVisivel(true);
+  };
+
+  const abrirModalEdicao = (medicamento: MedicamentoResponse) => {
+    setItemEmEdicao(medicamento);
+    setModalVisivel(true);
   };
 
   if (loading) {
@@ -126,12 +138,12 @@ export default function MedicamentoScreen() {
 
   return (
     <View style={styles.container}>
-      <Text>Tela dos Medicamentos</Text>
+      {/* <Text>Tela dos Medicamentos</Text> */}
 
       <ActionButton
         style={{ width: 320 }}
         titulo="ADICIONAR MEDICAMENTO"
-        onPress={() => setModalVisivel(true)}
+        onPress={abrirModalCadastro}
         icon={<MaterialCommunityIcons name="plus-circle" size={36} color="white" />}
       />
 
@@ -142,13 +154,17 @@ export default function MedicamentoScreen() {
         onRequestClose={() => setModalVisivel(false)}
       >
         <View style={styles.modalContainer}>
-          <FormularioCadastroMedicamento
-            onClose={() => setModalVisivel(false)}
-            onSaveSuccess={carregarMedicamentosCadastrados}
-          />
+          {modalVisivel && (
+            <FormularioMedicamento
+              onClose={() => setModalVisivel(false)}
+              onSaveSuccess={carregarMedicamentosCadastrados}
+              medicamentoParaEditar={itemEmEdicao}
+            />
+          )}
         </View>
-
       </Modal>
+
+      <Text style={styles.title}>SEUS MEDICAMENTOS</Text>
 
       <FlatList
         style={styles.flatList}
@@ -181,6 +197,11 @@ export default function MedicamentoScreen() {
               <View style={styles.cardBottomRow}>
                 <Pressable
                   style={styles.pressableButton}
+                  onPress={ () => {
+                    console.log("DADO DA API:", item.tipoUnidadeDeMedida);
+                    console.log("TIPO DO DADO:", typeof item.tipoUnidadeDeMedida);
+                    abrirModalEdicao(item);
+                  }}
                   disabled={isDeleting}
                 >
                   <MaterialCommunityIcons name="pencil" size={24} color="black" />

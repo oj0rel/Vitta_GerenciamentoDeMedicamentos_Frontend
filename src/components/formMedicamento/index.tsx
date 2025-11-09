@@ -1,7 +1,7 @@
-import { medicamentoCadastro } from "@/src/api/medicamentoApi";
+import { medicamentoAtualizar, medicamentoCadastro } from "@/src/api/medicamentoApi";
 import { useSession } from "@/src/contexts/authContext";
 import { TipoUnidadeDeMedida } from "@/src/enums/medicamento/tipoUnidadeDeMedida";
-import { MedicamentoCadastroData } from "@/src/types/medicamentoTypes";
+import { MedicamentoCadastroData, MedicamentoResponse } from "@/src/types/medicamentoTypes";
 import { Picker } from "@react-native-picker/picker";
 import { useState } from "react";
 import { Text, View } from "react-native";
@@ -16,18 +16,30 @@ const unidadesEnumKeys = Object.keys(TipoUnidadeDeMedida).filter(
 type FormularioProps = {
   onClose: () => void;
   onSaveSuccess: () => void;
+  medicamentoParaEditar?: MedicamentoResponse | null;
 }
 
-export default function FormularioCadastroMedicamento({ onClose, onSaveSuccess }: FormularioProps) {
+export default function FormularioMedicamento({
+  onClose,
+  onSaveSuccess,
+  medicamentoParaEditar
+}: FormularioProps) {
   const { session } = useSession();
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const [nome, setNome] = useState("");
-  const [principioAtivo, setPrincipioAtivo] = useState("");
-  const [laboratorio, setLaboratorio] = useState("");
+  const valorEnumDaApi = medicamentoParaEditar?.tipoUnidadeDeMedida.toString();
+
+  const valorInicialPicker = (valorEnumDaApi
+    ? TipoUnidadeDeMedida[valorEnumDaApi as keyof typeof TipoUnidadeDeMedida]
+    : null
+  ) as TipoUnidadeDeMedida | null;
+
+  const [nome, setNome] = useState(medicamentoParaEditar?.nome || "");
+  const [principioAtivo, setPrincipioAtivo] = useState(medicamentoParaEditar?.principioAtivo || "");
+  const [laboratorio, setLaboratorio] = useState(medicamentoParaEditar?.laboratorio || "");
   const [tipoUnidadeDeMedida, setTipoUnidadeDeMedida] =
-    useState<TipoUnidadeDeMedida | null>(null);
+    useState<TipoUnidadeDeMedida | null>(valorInicialPicker);
 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -45,7 +57,7 @@ export default function FormularioCadastroMedicamento({ onClose, onSaveSuccess }
     return null;
   };
 
-  const handleCadastroMedicamento = async () => {
+  const handleSalvar = async () => {
     setErrorMessage(null);
 
     const validationError = validateForm();
@@ -75,15 +87,22 @@ export default function FormularioCadastroMedicamento({ onClose, onSaveSuccess }
     };
 
     try {
-      const resposta = await medicamentoCadastro(session, dadosDoMedicamento);
+      if (medicamentoParaEditar) {
+        const resposta = await medicamentoAtualizar(session, medicamentoParaEditar.id, dadosDoMedicamento);
+        console.log("Medicamento atualizado com sucesso!", resposta);
+      } else {
+        const resposta = await medicamentoCadastro(session, dadosDoMedicamento);
+        console.log("Medicamento cadastrado com sucesso!", resposta);
+      }
 
-      console.log("Medicamento cadastrado com sucesso!", resposta);
-
+      console.log("Formulário salvo com sucesso!");
       onSaveSuccess();
       onClose();
     } catch (error) {
-      console.error("Erro na chamada de cadastro: ", error);
-      setErrorMessage("Falha ao cadastrar o medicamento. Tente novamente.");
+      console.error("Erro na chamada de salvar: ", error);
+
+      const verbo = medicamentoParaEditar ? "atualizar" : "cadastrar";
+      setErrorMessage(`Falha ao ${verbo} o medicamento. Tente novamente.`);
     } finally {
       setIsLoading(false);
     }
@@ -174,8 +193,8 @@ export default function FormularioCadastroMedicamento({ onClose, onSaveSuccess }
       </View>
 
       <ActionButton
-        titulo="CADASTRAR"
-        onPress={ handleCadastroMedicamento }
+        titulo={medicamentoParaEditar ? "ATUALIZAR" : "CADASTRAR"}
+        onPress={ handleSalvar }
         disabled={isLoading}
       />
 
