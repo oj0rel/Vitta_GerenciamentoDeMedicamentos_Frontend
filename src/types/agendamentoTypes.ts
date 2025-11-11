@@ -13,3 +13,10 @@ export type AgendamentoResponse = {
   tratamento: TratamentoResumoResponse;
   historicoDoMedicamentoTomado: MedicamentoHistoricoResumoResponse;
 }
+
+export type AgendamentoResumoResponse = {
+  id: number;
+  horarioDoAgendamento: Date;
+  tipoDeAlerta: TipoDeAlerta;
+  status: AgendamentoStatus;
+}
