@@ -3,17 +3,9 @@ import { StyleSheet } from "react-native";
 export const styles = StyleSheet.create({
   bottomTab: {
     position: "absolute",
-    bottom: 20,
-    left: 15,
-    right: 15,
-
-    borderRadius: 20,
+    borderRadius: 10,
 
     height: 70,
-
-    paddingVertical: 12,
-
-    // margin: 40,
 
     elevation: 8,
     shadowColor: "#000",
