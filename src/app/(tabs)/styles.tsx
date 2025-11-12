@@ -4,9 +4,7 @@ export const styles = StyleSheet.create({
   bottomTab: {
     position: "absolute",
     borderRadius: 10,
-
-    height: 70,
-
+    height: 90,
     elevation: 8,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: -2 },

@@ -5,7 +5,7 @@ export const styles = StyleSheet.create({
     gap: 1,
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 180,
+    marginBottom: 140,
     zIndex: 1,
   },
   formBody: {
@@ -47,6 +47,7 @@ export const styles = StyleSheet.create({
     height: 60,
     justifyContent: "center",
     overflow: "hidden",
+    marginBottom: 14,
   },
   picker: {
     width: "100%",

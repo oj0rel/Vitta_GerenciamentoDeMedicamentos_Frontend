@@ -33,12 +33,12 @@ export default function TabsRootLayout() {
       }}
     >
       <Tabs.Screen
-        name="home"
+        name="medicamentos"
         options={{
-          title: 'Home',
+          title: 'Medicamentos',
           tabBarIcon: ({ color, focused }: { color: string, focused: boolean }) => (
             <Ionicons
-              name={focused ? 'home' : 'home-outline'}
+              name={focused ? 'medkit' : 'medkit-outline'}
               size={28}
               color={color}
             />
@@ -47,12 +47,12 @@ export default function TabsRootLayout() {
       />
 
       <Tabs.Screen
-        name="medicamentos"
+        name="home"
         options={{
-          title: 'Medicamentos',
+          title: 'Home',
           tabBarIcon: ({ color, focused }: { color: string, focused: boolean }) => (
             <Ionicons
-              name={focused ? 'medkit' : 'medkit-outline'}
+              name={focused ? 'home' : 'home-outline'}
               size={28}
               color={color}
             />

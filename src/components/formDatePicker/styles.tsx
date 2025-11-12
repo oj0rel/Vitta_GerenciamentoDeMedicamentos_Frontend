@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 export const styles = StyleSheet.create({
   container: {
     width: "100%",
-    marginBottom: 10,
+    marginBottom: 14,
   },
   pickerContainer: {
     backgroundColor: '#F0F0F0',
