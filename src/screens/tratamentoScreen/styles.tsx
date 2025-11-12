@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native";
 
-export const styles = StyleSheet.create ({
+export const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
@@ -64,4 +64,4 @@ export const styles = StyleSheet.create ({
     fontWeight: "bold",
     marginTop: 20,
   },
-});
+})

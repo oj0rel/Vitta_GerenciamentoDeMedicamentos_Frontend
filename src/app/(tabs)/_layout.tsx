@@ -49,10 +49,24 @@ export default function TabsRootLayout() {
       <Tabs.Screen
         name="medicamentos"
         options={{
-          title: 'Medicamento',
+          title: 'Medicamentos',
           tabBarIcon: ({ color, focused }: { color: string, focused: boolean }) => (
             <Ionicons
               name={focused ? 'medkit' : 'medkit-outline'}
+              size={28}
+              color={color}
+            />
+          ),
+        }}
+      />
+
+      <Tabs.Screen
+        name="tratamentos"
+        options={{
+          title: 'Tratamentos',
+          tabBarIcon: ({ color, focused }: { color: string, focused: boolean }) => (
+            <Ionicons
+              name={focused ? 'medical' : 'medical-outline'}
               size={28}
               color={color}
             />
