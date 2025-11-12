@@ -103,13 +103,14 @@ export default function FormularioTratamento({
   >([]);
   const [isLoadingMedicamentos, setIsLoadingMedicamentos] = useState(false);
 
+  const [etapa, setEtapa] = useState(1);
+
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const validateForm = () => {
+  const validateEtapa1 = () => {
     if (!medicamentoSelecionado) {
       return "É obrigatório selecionar um medicamento.";
     }
-
     if (!nome.trim()) {
       return "O campo Nome do Tratamento é obrigatório.";
     }
@@ -118,18 +119,28 @@ export default function FormularioTratamento({
     if (!dosagem.trim() || isNaN(dosagemNum) || dosagemNum <= 0) {
       return "O campo Dosagem é obrigatório e deve ser um número maior que zero.";
     }
+    return null;
+  }
 
+  const validateEtapa2 = () => {
     if (!dataDeInicio) {
       return "A Data de Início é obrigatória.";
     }
-
     if (!dataDeTermino) {
       return "A Data de Término é obrigatória.";
     }
-
     if (dataDeTermino && dataDeInicio && dataDeTermino < dataDeInicio) {
       return "A Data de Término não pode ser anterior à Data de Início.";
     }
+    return null;
+  };
+
+  const validateForm = () => {
+    const erroEtapa1 = validateEtapa1();
+    if (erroEtapa1) return erroEtapa1;
+
+    const erroEtapa2 = validateEtapa2();
+    if (erroEtapa2) return erroEtapa2;
 
     if (!tipoDeFrequencia) {
       return "O Tipo de Frequência é obrigatório.";
@@ -174,6 +185,28 @@ export default function FormularioTratamento({
 
     return null;
   };
+
+  const handleProsseguirEtapa2 = () => {
+    setErrorMessage(null);
+    
+    const validationError = validateEtapa1();
+    if (validationError) {
+      setErrorMessage(validationError);
+    } else {
+      setEtapa(2);
+    }
+  }
+
+  const handleProsseguirEtapa3 = () => {
+    setErrorMessage(null);
+    
+    const validationError = validateEtapa2();
+    if (validationError) {
+      setErrorMessage(validationError);
+    } else {
+      setEtapa(3);
+    }
+  }
 
   const handleSalvar = async () => {
     setErrorMessage(null);
@@ -325,153 +358,208 @@ export default function FormularioTratamento({
 
   return (
     <View style={styles.modalContent}>
-    <View style={styles.formBody}>
-      <View style={styles.formRequestBody}>
-        
-        {errorMessage && (
-          <View style={styles.errorContainer}>
-            <Text style={styles.errorText}>{errorMessage}</Text>
-          </View>
-        )}
+      <View style={styles.formBody}>
+        <View style={styles.formRequestBody}>
+          
+          {errorMessage && (
+            <View style={styles.errorContainer}>
+              <Text style={styles.errorText}>{errorMessage}</Text>
+            </View>
+          )}
 
-        <FormInput
-          titulo="Nome do Tratamento"
-          value={nome}
-          onChangeText={handleNomeChange}
-          placeHolder="Ex: Antibiótico 7 dias"
-          autoCapitalize="sentences"
-        />
-
-        <Text style={styles.tittle}>Medicamento</Text>
-        <View style={styles.pickerContainer}>
-          <Picker
-            selectedValue={medicamentoSelecionado?.id}
-            
-            onValueChange={(itemId: number | null) => {
-              if (itemId === null) {
-                handleMedicamentoSelecionadoChange(null);
-              } else {
-                const medSelecionado = listaDeMedicamentos.find(
-                  (m) => m.id === itemId
-                );
-                handleMedicamentoSelecionadoChange(medSelecionado || null);
-              }
-            }}
-            style={styles.picker}
-            enabled={!isLoadingMedicamentos} 
-          >
-            <Picker.Item label="Selecione um medicamento..." value={null} />
-            
-            {listaDeMedicamentos.map((med) => (
-              <Picker.Item
-                key={med.id}
-                label={med.nome}
-                value={med.id}
+          {etapa === 1 && (
+            <>
+              <FormInput
+                titulo="Nome do Tratamento"
+                value={nome}
+                onChangeText={handleNomeChange}
+                placeHolder="Ex: Antibiótico 7 dias"
+                autoCapitalize="sentences"
               />
-            ))}
-          </Picker>
-        </View>
 
-        <FormInput
-          titulo="Dosagem"
-          value={dosagem}
-          onChangeText={handleDosagemChange}
-          placeHolder="Ex: 500"
-          keyboardType="numeric" 
-        />
+              <Text style={styles.tittle}>Medicamento</Text>
+              <View style={styles.pickerContainer}>
+                <Picker
+                  selectedValue={medicamentoSelecionado?.id}
+                  
+                  onValueChange={(itemId: number | null) => {
+                    if (itemId === null) {
+                      handleMedicamentoSelecionadoChange(null);
+                    } else {
+                      const medSelecionado = listaDeMedicamentos.find(
+                        (m) => m.id === itemId
+                      );
+                      handleMedicamentoSelecionadoChange(medSelecionado || null);
+                    }
+                  }}
+                  style={styles.picker}
+                  enabled={!isLoadingMedicamentos} 
+                >
+                  <Picker.Item label="Selecione um medicamento..." value={null} />
+                  
+                  {listaDeMedicamentos.map((med) => (
+                    <Picker.Item
+                      key={med.id}
+                      label={med.nome}
+                      value={med.id}
+                    />
+                  ))}
+                </Picker>
+              </View>
 
-        <FormInput
-          titulo="Instruções"
-          value={instrucoes}
-          onChangeText={handleInstrucoesChange}
-          placeHolder="Ex: Tomar com água, após refeição"
-          autoCapitalize="sentences"
-        />
-
-        <Text style={styles.tittle}>Data de Início</Text>
-        <FormDatePicker
-          value={dataDeInicio}
-          onChange={handleDataDeInicioChange}
-        />
-        
-        <Text style={styles.tittle}>Data de Término</Text>
-        <FormDatePicker
-          value={dataDeTermino}
-          onChange={handleDataDeTerminoChange}
-        />
-
-        <Text style={styles.tittle}>Tipo de Frequência</Text>
-        <View style={styles.pickerContainer}>
-          <Picker
-            selectedValue={tipoDeFrequencia}
-            onValueChange={handleTipoDeFrequenciaChange}
-            style={styles.picker}
-          >
-            <Picker.Item label="Selecione a frequência..." value={null} />
-            {frequenciaEnumKeys.map((key) => (
-              <Picker.Item
-                key={key}
-                label={key}
-                value={
-                  TipoDeFrequencia[key as keyof typeof TipoDeFrequencia]
-                }
+              <FormInput
+                titulo="Dosagem"
+                value={dosagem}
+                onChangeText={handleDosagemChange}
+                placeHolder="Ex: 500"
+                keyboardType="numeric" 
               />
-            ))}
-          </Picker>
-        </View>
 
-        {tipoDeFrequencia === TipoDeFrequencia.INTERVALO_HORAS && (
-          <FormInput
-            titulo="Intervalo (em horas)"
-            value={intervaloEmHoras}
-            onChangeText={handleIntervaloEmHorasChange}
-            placeHolder="Ex: 8 (para de 8 em 8 horas)"
-            keyboardType="numeric"
-          />
-        )}
-
-        {tipoDeFrequencia === TipoDeFrequencia.HORARIOS_ESPECIFICOS && (
-          <FormInput
-            titulo="Horários Específicos"
-            value={horariosEspecificos}
-            onChangeText={handleHorariosEspecificosChange}
-            placeHolder="Ex: 08:00, 14:00, 22:00"
-            autoCapitalize="none"
-          />
-        )}
-
-        <Text style={styles.tittle}>Tipo de Alerta</Text>
-        <View style={styles.pickerContainer}>
-          <Picker
-            selectedValue={tipoDeAlerta}
-            onValueChange={handleTipoDeAlertaChange}
-            style={styles.picker}
-          >
-            <Picker.Item label="Selecione o tipo de alerta..." value={null} />
-            {alertaEnumKeys.map((key) => (
-              <Picker.Item
-                key={key}
-                label={key}
-                value={TipoDeAlerta[key as keyof typeof TipoDeAlerta]}
+              <FormInput
+                titulo="Instruções"
+                value={instrucoes}
+                onChangeText={handleInstrucoesChange}
+                placeHolder="Ex: Tomar com água, após refeição"
+                autoCapitalize="sentences"
               />
-            ))}
-          </Picker>
-        </View>
+            </>
+          )}
 
+          {etapa === 2 && (
+            <>
+              <Text style={styles.tittle}>Data de Início</Text>
+                <FormDatePicker
+                  value={dataDeInicio}
+                  onChange={handleDataDeInicioChange}
+                />
+                
+                <Text style={styles.tittle}>Data de Término</Text>
+                <FormDatePicker
+                  value={dataDeTermino}
+                  onChange={handleDataDeTerminoChange}
+                />
+            </>
+          )}
+
+          {etapa === 3 && (
+            <>
+              <Text style={styles.tittle}>Tipo de Frequência</Text>
+                <View style={styles.pickerContainer}>
+                  <Picker
+                    selectedValue={tipoDeFrequencia}
+                    onValueChange={handleTipoDeFrequenciaChange}
+                    style={styles.picker}
+                  >
+                    <Picker.Item label="Selecione a frequência..." value={null} />
+                    {frequenciaEnumKeys.map((key) => (
+                      <Picker.Item
+                        key={key}
+                        label={key}
+                        value={
+                          TipoDeFrequencia[key as keyof typeof TipoDeFrequencia]
+                        }
+                      />
+                    ))}
+                  </Picker>
+                </View>
+
+                {tipoDeFrequencia === TipoDeFrequencia.INTERVALO_HORAS && (
+                  <FormInput
+                    titulo="Intervalo (em horas)"
+                    value={intervaloEmHoras}
+                    onChangeText={handleIntervaloEmHorasChange}
+                    placeHolder="Ex: 8 (para de 8 em 8 horas)"
+                    keyboardType="numeric"
+                  />
+                )}
+
+                {tipoDeFrequencia === TipoDeFrequencia.HORARIOS_ESPECIFICOS && (
+                  <FormInput
+                    titulo="Horários Específicos"
+                    value={horariosEspecificos}
+                    onChangeText={handleHorariosEspecificosChange}
+                    placeHolder="Ex: 08:00, 14:00, 22:00"
+                    autoCapitalize="none"
+                  />
+                )}
+
+                <Text style={styles.tittle}>Tipo de Alerta</Text>
+                <View style={styles.pickerContainer}>
+                  <Picker
+                    selectedValue={tipoDeAlerta}
+                    onValueChange={handleTipoDeAlertaChange}
+                    style={styles.picker}
+                  >
+                    <Picker.Item label="Selecione o tipo de alerta..." value={null} />
+                    {alertaEnumKeys.map((key) => (
+                      <Picker.Item
+                        key={key}
+                        label={key}
+                        value={TipoDeAlerta[key as keyof typeof TipoDeAlerta]}
+                      />
+                    ))}
+                  </Picker>
+                </View>
+            </>
+          )}
+
+        </View>
       </View>
-    </View>
 
-    <ActionButton
-      titulo={tratamentoParaEditar ? "ATUALIZAR" : "CADASTRAR"}
-      onPress={handleSalvar}
-      disabled={isLoading || isLoadingMedicamentos} 
-    />
+      {etapa === 1 && (
+        <>
+          <ActionButton
+            titulo="PROSSEGUIR"
+            onPress={handleProsseguirEtapa2}
+            disabled={isLoading || isLoadingMedicamentos} 
+          />
 
-    <ActionButton
-      titulo="CANCELAR"
-      onPress={onClose}
-      disabled={isLoading}
-    />
+          <ActionButton
+            titulo="CANCELAR"
+            onPress={onClose}
+            disabled={isLoading}
+          />
+        </>
+      )}
+
+      {etapa === 2 && (
+        <>
+          <ActionButton
+            titulo="PROSSEGUIR"
+            onPress={handleProsseguirEtapa3}
+            disabled={isLoading} 
+          />
+
+          <ActionButton
+            titulo="CANCELAR"
+            onPress={() => {
+              setEtapa(1);
+              setErrorMessage(null);
+            }}
+            disabled={isLoading}
+          />
+        </>
+      )}
+
+      {etapa === 3 && (
+        <>
+          <ActionButton
+            titulo={tratamentoParaEditar ? "ATUALIZAR" : "CADASTRAR"}
+            onPress={handleSalvar}
+            disabled={isLoading || isLoadingMedicamentos} 
+          />
+
+          <ActionButton
+            titulo="CANCELAR"
+            onPress={() => {
+              setEtapa(2);
+              setErrorMessage(null);
+            }}
+            disabled={isLoading}
+          />
+        </>
+      )}
+
   </View>
   );
 }
