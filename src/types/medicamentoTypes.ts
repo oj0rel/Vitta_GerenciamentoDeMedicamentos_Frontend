@@ -8,7 +8,7 @@ export type MedicamentoCadastroData = {
   tipoUnidadeDeMedida: TipoUnidadeDeMedida;
 }
 
-export type MedicamentoCadastroAtualizarData = {
+export type MedicamentoAtualizarData = {
   nome: string;
   principioAtivo: string;
   laboratorio: string;
