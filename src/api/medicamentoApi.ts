@@ -1,5 +1,5 @@
 import axios from "axios";
-import { MedicamentoCadastroAtualizarData, MedicamentoCadastroData, MedicamentoResponse } from "../types/medicamentoTypes";
+import { MedicamentoAtualizarData, MedicamentoCadastroData, MedicamentoResponse, MedicamentoResumoResponse } from "../types/medicamentoTypes";
 import apiManager from "./apiManager";
 
 export const listarMedicamentos = async (
@@ -26,6 +26,29 @@ export const listarMedicamentos = async (
   }
 }
 
+export const listarMedicamentosResumo = async (
+  token: string,
+): Promise<MedicamentoResumoResponse[]> => {
+  try {
+    const response = await apiManager.get<MedicamentoResumoResponse[]>('api/medicamentos/listar', {
+
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+
+    });
+
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error(`Erro ao listar medicamentos: ${error.message}`, error.response?.data);
+    } else {
+      console.error(`Erro ao listar medicamentos para o token: ${token}`, error);
+    }
+
+    throw error;
+  }
+}
 
 export const listarUnicoMedicamento = async (
   token: string,
@@ -71,7 +94,7 @@ export const medicamentoCadastro = async (
 export const medicamentoAtualizar = async (
   token: string,
   medicamentoId: number,
-  data: MedicamentoCadastroAtualizarData): Promise<MedicamentoResponse> => {
+  data: MedicamentoAtualizarData): Promise<MedicamentoResponse> => {
   try {
     const response = await apiManager.put<MedicamentoResponse>(`api/medicamentos/atualizar/${medicamentoId}`, data, {
       
