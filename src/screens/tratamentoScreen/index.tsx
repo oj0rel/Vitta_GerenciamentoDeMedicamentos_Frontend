@@ -138,6 +138,25 @@ export default function TratamentoScreen() {
     setModalVisivel(true);
   };
 
+  const isTratamentoVencido = (dataTerminoString: string | Date): boolean => {
+    if (!dataTerminoString) {
+      return false;
+    }
+
+    try {
+      const hoje = new Date();
+      hoje.setHours(0, 0, 0, 0);
+
+      const [ano, mes, dia] = String(dataTerminoString).split('T')[0].split('-').map(Number);
+      const dataTermino = new Date(ano, mes - 1, dia);
+
+      return dataTermino < hoje;
+    } catch (error) {
+      console.error("Erro ao processar data de término: ", error);
+      return false;
+    }
+  }
+
   if (loading) {
     return (
       <View style={styles.container}>
@@ -193,6 +212,7 @@ export default function TratamentoScreen() {
         data={tratamentos}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
+
           <View style={styles.cardsContainer}>
             <View style={styles.cardContent}>
               <View style={styles.cardTopRow}>
@@ -213,15 +233,26 @@ export default function TratamentoScreen() {
                     {item.instrucoes}
                   </Text>
 
-                  <View style={styles.dateContainer}>
-                    <Text style={styles.dateText}>
-                      {formatarData(item.dataDeInicio)}
-                    </Text>
+                  {isTratamentoVencido(item.dataDeTermino) ? (
+                    <View style={styles.dateContainer}>
+                      <Text style={styles.concluidoText}>
+                        <MaterialCommunityIcons name="check-circle" size={20} color="#fff" />
+                        {" "}Concluído
+                      </Text>
+                    </View>
+                  ) : (
+                    <View style={styles.dateContainer}>
+                      <Text style={styles.dateText}>
+                        {formatarData(item.dataDeInicio)}
+                      </Text>
 
-                    <Text style={styles.dateText}>
-                      {formatarData(item.dataDeTermino)}
-                    </Text>
-                  </View>
+                      <Text style={styles.dateText}>
+                        {formatarData(item.dataDeTermino)}
+                      </Text>
+
+
+                    </View>
+                  )}
                 </View>
               </View>
 
