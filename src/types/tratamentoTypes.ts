@@ -9,8 +9,8 @@ export type TratamentoCadastroData = {
   nome: string;
   dosagem: number;
   instrucoes: string;
-  dataDeInicio: Date;
-  dataDeTermino: Date;
+  dataDeInicio: string;
+  dataDeTermino: string;
   tipoDeFrequencia: TipoDeFrequencia;
   intervaloEmHoras: number;
   horariosEspecificos: string;
@@ -22,8 +22,8 @@ export type TratamentoAtualizarData = {
   nome: string;
   dosagem: number;
   instrucoes: string;
-  dataDeInicio: Date;
-  dataDeTermino: Date;
+  dataDeInicio: string;
+  dataDeTermino: string;
   tipoDeFrequencia: TipoDeFrequencia;
   intervaloEmHoras: number;
   horariosEspecificos: string;
@@ -35,8 +35,8 @@ export type TratamentoResponse = {
   nome: string;
   dosagem: number;
   instrucoes: string;
-  dataDeInicio: Date;
-  dataDeTermino: Date;
+  dataDeInicio: string;
+  dataDeTermino: string;
   tipoDeFrequencia: TipoDeFrequencia;
   intervaloEmHoras: number;
   horariosEspecificos: string;
@@ -50,8 +50,8 @@ export type TratamentoResponse = {
 export type TratamentoResumoResponse = {
   id: number;
   nome: string;
-  dataDeInicio: Date;
-  dataDeTermino: Date;
+  dataDeInicio: string;
+  dataDeTermino: string;
   status: TratamentoStatus;
   medicamento: MedicamentoResumoResponse;
 }

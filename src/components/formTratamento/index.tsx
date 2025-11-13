@@ -38,6 +38,28 @@ const isValidTimeFormat = (time: string): boolean => {
   return regexHHmm.test(time);
 };
 
+const parseDateAsLocal = (dataString: string | Date): Date => {
+  if (!dataString) return new Date();
+  if (dataString instanceof Date) return dataString;
+
+  try {
+    const dateOnly = dataString.split("T")[0];
+    const [ano, mes, dia] = dateOnly.split("-").map(Number);
+
+    return new Date(ano, mes - 1, dia);
+  } catch (error) {
+    return new Date();
+  }
+};
+
+const formatarDataParaApi = (date: Date): string => {
+  const ano = date.getFullYear();
+  const mes = (date.getMonth() + 1).toString().padStart(2, '0');
+  const dia = date.getDate().toString().padStart(2, '0');
+
+  return `${ano}-${mes}-${dia}`;
+};
+
 export default function FormularioTratamento({
   onClose,
   onSaveSuccess,
@@ -47,13 +69,21 @@ export default function FormularioTratamento({
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const valorEnumDaApi = tratamentoParaEditar?.tipoDeFrequencia.toString();
+  const valorEnumFrequenciaDaApi = tratamentoParaEditar?.tipoDeFrequencia?.toString();
 
   const valorInicialPicker = (
-    valorEnumDaApi
-      ? TipoDeFrequencia[valorEnumDaApi as keyof typeof TipoDeFrequencia]
+    valorEnumFrequenciaDaApi
+      ? TipoDeFrequencia[valorEnumFrequenciaDaApi as keyof typeof TipoDeFrequencia]
       : null
   ) as TipoDeFrequencia | null;
+
+  const valorEnumAlertaDaApi = tratamentoParaEditar?.tipoDeAlerta?.toString();
+
+  const valorInicialAlertaPicker = (
+    valorEnumAlertaDaApi
+      ? TipoDeAlerta[valorEnumAlertaDaApi as keyof typeof TipoDeAlerta]
+      : null
+  ) as TipoDeAlerta | null;
 
   const [medicamentoSelecionado, setMedicamentoSelecionado] =
     useState<MedicamentoResumoResponse | null>(
@@ -72,18 +102,18 @@ export default function FormularioTratamento({
 
   const [dataDeInicio, setDataDeInicio] = useState<Date | null>(
     tratamentoParaEditar?.dataDeInicio
-      ? new Date(tratamentoParaEditar.dataDeInicio)
+      ? parseDateAsLocal(tratamentoParaEditar.dataDeInicio)
       : null
   );
   const [dataDeTermino, setDataDeTermino] = useState<Date | null>(
     tratamentoParaEditar?.dataDeTermino
-      ? new Date(tratamentoParaEditar.dataDeTermino)
+      ? parseDateAsLocal(tratamentoParaEditar.dataDeTermino)
       : null
   );
 
   const [tipoDeFrequencia, setTipoDeFrequencia] =
     useState<TipoDeFrequencia | null>(
-      tratamentoParaEditar?.tipoDeFrequencia || null
+      valorInicialPicker
     );
 
   const [intervaloEmHoras, setIntervaloEmHoras] = useState(
@@ -95,7 +125,7 @@ export default function FormularioTratamento({
   );
 
   const [tipoDeAlerta, setTipoDeAlerta] = useState<TipoDeAlerta | null>(
-    tratamentoParaEditar?.tipoDeAlerta || null
+    valorInicialAlertaPicker
   );
 
   const [listaDeMedicamentos, setListaDeMedicamentos] = useState<
@@ -120,7 +150,7 @@ export default function FormularioTratamento({
       return "O campo Dosagem é obrigatório e deve ser um número maior que zero.";
     }
     return null;
-  }
+  };
 
   const validateEtapa2 = () => {
     if (!dataDeInicio) {
@@ -188,25 +218,25 @@ export default function FormularioTratamento({
 
   const handleProsseguirEtapa2 = () => {
     setErrorMessage(null);
-    
+
     const validationError = validateEtapa1();
     if (validationError) {
       setErrorMessage(validationError);
     } else {
       setEtapa(2);
     }
-  }
+  };
 
   const handleProsseguirEtapa3 = () => {
     setErrorMessage(null);
-    
+
     const validationError = validateEtapa2();
     if (validationError) {
       setErrorMessage(validationError);
     } else {
       setEtapa(3);
     }
-  }
+  };
 
   const handleSalvar = async () => {
     setErrorMessage(null);
@@ -239,8 +269,8 @@ export default function FormularioTratamento({
       nome: nome.trim(),
       dosagem: parseFloat(dosagem),
       instrucoes: instrucoes.trim(),
-      dataDeInicio: dataDeInicio,
-      dataDeTermino: dataDeTermino,
+      dataDeInicio: formatarDataParaApi(dataDeInicio),
+      dataDeTermino: formatarDataParaApi(dataDeTermino),
       tipoDeFrequencia: tipoDeFrequencia,
 
       intervaloEmHoras:
@@ -315,8 +345,9 @@ export default function FormularioTratamento({
     if (errorMessage) setErrorMessage(null);
   };
 
-  const handleTipoDeFrequenciaChange = (itemValue: TipoDeFrequencia | null) => {
-    setTipoDeFrequencia(itemValue);
+  const handleTipoDeFrequenciaChange = (itemValue: any) => {
+    const valorNumerico = itemValue === null ? null : Number(itemValue);
+    setTipoDeFrequencia(valorNumerico);
     if (errorMessage) setErrorMessage(null);
   };
 
@@ -330,8 +361,9 @@ export default function FormularioTratamento({
     if (errorMessage) setErrorMessage(null);
   };
 
-  const handleTipoDeAlertaChange = (itemValue: TipoDeAlerta | null) => {
-    setTipoDeAlerta(itemValue);
+  const handleTipoDeAlertaChange = (itemValue: any) => {
+    const valorNumerico = itemValue === null ? null : Number(itemValue);
+    setTipoDeAlerta(valorNumerico);
     if (errorMessage) {
       setErrorMessage(null);
     }
@@ -347,7 +379,9 @@ export default function FormularioTratamento({
         setListaDeMedicamentos(resposta);
       } catch (error) {
         console.error("Erro ao buscar medicamentos:", error);
-        setErrorMessage("Falha ao carregar a lista de medicamentos. Tente fechar e abrir novamente.");
+        setErrorMessage(
+          "Falha ao carregar a lista de medicamentos. Tente fechar e abrir novamente."
+        );
       } finally {
         setIsLoadingMedicamentos(false);
       }
@@ -360,7 +394,6 @@ export default function FormularioTratamento({
     <View style={styles.modalContent}>
       <View style={styles.formBody}>
         <View style={styles.formRequestBody}>
-          
           {errorMessage && (
             <View style={styles.errorContainer}>
               <Text style={styles.errorText}>{errorMessage}</Text>
@@ -381,7 +414,6 @@ export default function FormularioTratamento({
               <View style={styles.pickerContainer}>
                 <Picker
                   selectedValue={medicamentoSelecionado?.id}
-                  
                   onValueChange={(itemId: number | null) => {
                     if (itemId === null) {
                       handleMedicamentoSelecionadoChange(null);
@@ -389,20 +421,21 @@ export default function FormularioTratamento({
                       const medSelecionado = listaDeMedicamentos.find(
                         (m) => m.id === itemId
                       );
-                      handleMedicamentoSelecionadoChange(medSelecionado || null);
+                      handleMedicamentoSelecionadoChange(
+                        medSelecionado || null
+                      );
                     }
                   }}
                   style={styles.picker}
-                  enabled={!isLoadingMedicamentos} 
+                  enabled={!isLoadingMedicamentos}
                 >
-                  <Picker.Item label="Selecione um medicamento..." value={null} />
-                  
+                  <Picker.Item
+                    label="Selecione um medicamento..."
+                    value={null}
+                  />
+
                   {listaDeMedicamentos.map((med) => (
-                    <Picker.Item
-                      key={med.id}
-                      label={med.nome}
-                      value={med.id}
-                    />
+                    <Picker.Item key={med.id} label={med.nome} value={med.id} />
                   ))}
                 </Picker>
               </View>
@@ -412,7 +445,7 @@ export default function FormularioTratamento({
                 value={dosagem}
                 onChangeText={handleDosagemChange}
                 placeHolder="Ex: 500"
-                keyboardType="numeric" 
+                keyboardType="numeric"
               />
 
               <FormInput
@@ -428,81 +461,83 @@ export default function FormularioTratamento({
           {etapa === 2 && (
             <>
               <Text style={styles.tittle}>Data de Início</Text>
-                <FormDatePicker
-                  value={dataDeInicio}
-                  onChange={handleDataDeInicioChange}
-                />
-                
-                <Text style={styles.tittle}>Data de Término</Text>
-                <FormDatePicker
-                  value={dataDeTermino}
-                  onChange={handleDataDeTerminoChange}
-                />
+              <FormDatePicker
+                value={dataDeInicio}
+                onChange={handleDataDeInicioChange}
+              />
+
+              <Text style={styles.tittle}>Data de Término</Text>
+              <FormDatePicker
+                value={dataDeTermino}
+                onChange={handleDataDeTerminoChange}
+              />
             </>
           )}
 
           {etapa === 3 && (
             <>
               <Text style={styles.tittle}>Tipo de Frequência</Text>
-                <View style={styles.pickerContainer}>
-                  <Picker
-                    selectedValue={tipoDeFrequencia}
-                    onValueChange={handleTipoDeFrequenciaChange}
-                    style={styles.picker}
-                  >
-                    <Picker.Item label="Selecione a frequência..." value={null} />
-                    {frequenciaEnumKeys.map((key) => (
-                      <Picker.Item
-                        key={key}
-                        label={key}
-                        value={
-                          TipoDeFrequencia[key as keyof typeof TipoDeFrequencia]
-                        }
-                      />
-                    ))}
-                  </Picker>
-                </View>
+              <View style={styles.pickerContainer}>
+                <Picker
+                  selectedValue={tipoDeFrequencia}
+                  onValueChange={handleTipoDeFrequenciaChange}
+                  style={styles.picker}
+                >
+                  <Picker.Item label="Selecione a frequência..." value={null} />
+                  {frequenciaEnumKeys.map((key) => (
+                    <Picker.Item
+                      key={key}
+                      label={key}
+                      value={
+                        TipoDeFrequencia[key as keyof typeof TipoDeFrequencia]
+                      }
+                    />
+                  ))}
+                </Picker>
+              </View>
 
-                {tipoDeFrequencia === TipoDeFrequencia.INTERVALO_HORAS && (
-                  <FormInput
-                    titulo="Intervalo (em horas)"
-                    value={intervaloEmHoras}
-                    onChangeText={handleIntervaloEmHorasChange}
-                    placeHolder="Ex: 8 (para de 8 em 8 horas)"
-                    keyboardType="numeric"
+              {tipoDeFrequencia === TipoDeFrequencia.INTERVALO_HORAS && (
+                <FormInput
+                  titulo="Intervalo (em horas)"
+                  value={intervaloEmHoras}
+                  onChangeText={handleIntervaloEmHorasChange}
+                  placeHolder="Ex: 8 (para de 8 em 8 horas)"
+                  keyboardType="numeric"
+                />
+              )}
+
+              {tipoDeFrequencia === TipoDeFrequencia.HORARIOS_ESPECIFICOS && (
+                <FormInput
+                  titulo="Horários Específicos"
+                  value={horariosEspecificos}
+                  onChangeText={handleHorariosEspecificosChange}
+                  placeHolder="Ex: 08:00, 14:00, 22:00"
+                  autoCapitalize="none"
+                />
+              )}
+
+              <Text style={styles.tittle}>Tipo de Alerta</Text>
+              <View style={styles.pickerContainer}>
+                <Picker
+                  selectedValue={tipoDeAlerta}
+                  onValueChange={handleTipoDeAlertaChange}
+                  style={styles.picker}
+                >
+                  <Picker.Item
+                    label="Selecione o tipo de alerta..."
+                    value={null}
                   />
-                )}
-
-                {tipoDeFrequencia === TipoDeFrequencia.HORARIOS_ESPECIFICOS && (
-                  <FormInput
-                    titulo="Horários Específicos"
-                    value={horariosEspecificos}
-                    onChangeText={handleHorariosEspecificosChange}
-                    placeHolder="Ex: 08:00, 14:00, 22:00"
-                    autoCapitalize="none"
-                  />
-                )}
-
-                <Text style={styles.tittle}>Tipo de Alerta</Text>
-                <View style={styles.pickerContainer}>
-                  <Picker
-                    selectedValue={tipoDeAlerta}
-                    onValueChange={handleTipoDeAlertaChange}
-                    style={styles.picker}
-                  >
-                    <Picker.Item label="Selecione o tipo de alerta..." value={null} />
-                    {alertaEnumKeys.map((key) => (
-                      <Picker.Item
-                        key={key}
-                        label={key}
-                        value={TipoDeAlerta[key as keyof typeof TipoDeAlerta]}
-                      />
-                    ))}
-                  </Picker>
-                </View>
+                  {alertaEnumKeys.map((key) => (
+                    <Picker.Item
+                      key={key}
+                      label={key}
+                      value={TipoDeAlerta[key as keyof typeof TipoDeAlerta]}
+                    />
+                  ))}
+                </Picker>
+              </View>
             </>
           )}
-
         </View>
       </View>
 
@@ -511,7 +546,7 @@ export default function FormularioTratamento({
           <ActionButton
             titulo="PROSSEGUIR"
             onPress={handleProsseguirEtapa2}
-            disabled={isLoading || isLoadingMedicamentos} 
+            disabled={isLoading || isLoadingMedicamentos}
           />
 
           <ActionButton
@@ -527,7 +562,7 @@ export default function FormularioTratamento({
           <ActionButton
             titulo="PROSSEGUIR"
             onPress={handleProsseguirEtapa3}
-            disabled={isLoading} 
+            disabled={isLoading}
           />
 
           <ActionButton
@@ -546,7 +581,7 @@ export default function FormularioTratamento({
           <ActionButton
             titulo={tratamentoParaEditar ? "ATUALIZAR" : "CADASTRAR"}
             onPress={handleSalvar}
-            disabled={isLoading || isLoadingMedicamentos} 
+            disabled={isLoading || isLoadingMedicamentos}
           />
 
           <ActionButton
@@ -559,7 +594,6 @@ export default function FormularioTratamento({
           />
         </>
       )}
-
-  </View>
+    </View>
   );
 }
