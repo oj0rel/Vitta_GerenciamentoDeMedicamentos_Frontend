@@ -85,7 +85,7 @@ export const tratamentoAtualizar = async (
   }
 }
 
-export const medicamentoDeletar = async (
+export const tratamentoDeletar = async (
   token: string,
   tratamentoId: number,
 ): Promise<TratamentoResponse> => {

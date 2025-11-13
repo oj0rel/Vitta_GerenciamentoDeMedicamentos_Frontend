@@ -20,8 +20,13 @@ export const styles = StyleSheet.create({
     margin: 14,
     borderRadius: 10,
     width: 350,
-    justifyContent: "space-between",
+    justifyContent: "flex-start",
     paddingVertical: 10,
+    gap: 16,
+  },
+  textContainer: {
+    flex: 1,
+    marginLeft: 10,
   },
   textContent: {
     color: '#fff',
@@ -44,7 +49,7 @@ export const styles = StyleSheet.create({
     gap: 10,
     alignSelf: "flex-end", 
     marginRight: 14,
-    
+    marginTop: 6,
   },
   pressableButton: {
     backgroundColor: '#fff',
@@ -63,5 +68,15 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     marginTop: 20,
+  },
+  dateContainer: {
+    flexDirection: "row",
+    gap: 20,
+    paddingLeft: 12,
+    marginTop: 10,
+  },
+  dateText: {
+    color: '#fff',
+    fontSize: 14,
   },
 })
