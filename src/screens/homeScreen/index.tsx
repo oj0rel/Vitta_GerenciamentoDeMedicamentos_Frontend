@@ -5,7 +5,8 @@ import { AuthContext, useSession } from "@/src/contexts/authContext";
 import { AgendamentoResponse } from "@/src/types/agendamentoTypes";
 import { endOfMonth, format, isWithinInterval, startOfMonth } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { useFocusEffect } from "expo-router";
+import { useCallback, useContext, useMemo, useState } from "react";
 import { FlatList, Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./styles";
@@ -24,12 +25,7 @@ export default function HomeScreen() {
 
   const { usuario } = useContext(AuthContext);
 
-  useEffect(() => {
-    if (!loading) {
-      return;
-    }
-
-    const carregarAgendamentosDoMes = async () => {
+  const carregarAgendamentosDoMes = useCallback(async () => {
       if (session) {
         try {
           setError(null);
@@ -53,10 +49,13 @@ export default function HomeScreen() {
         setLoading(false);
         setError("Usuário não autenticado.");
       }
-    };
-
-    carregarAgendamentosDoMes();
-  }, [session, mesVisivel, loading]);
+    }, [session, mesVisivel]);
+  
+  useFocusEffect(
+    useCallback(() => {
+      carregarAgendamentosDoMes();
+    }, [carregarAgendamentosDoMes])
+  );
 
   const agendamentosParaExibir = useMemo(() => {
     if (diaSelecionado) {
@@ -95,7 +94,6 @@ export default function HomeScreen() {
 
   const handleMesMudou = useCallback((novoMes: Date) => {
     setMesVisivel(novoMes);
-    setLoading(true);
     setDiaSelecionado(null);
   }, []);
 
