@@ -34,6 +34,9 @@ export default function TratamentoScreen() {
     null
   );
 
+  const [modalVerVisivel, setModalVerVisivel] = useState(false);
+  const [itemParaVer, setItemParaVer] = useState<TratamentoResponse | null>(null);
+
   const carregarTratamentosCadastrados = useCallback(async () => {
     if (!session) return;
 
@@ -138,6 +141,16 @@ export default function TratamentoScreen() {
     setModalVisivel(true);
   };
 
+  const abrirModalVer = (tratamento: TratamentoResponse) => {
+    setItemParaVer(tratamento);
+    setModalVerVisivel(true);
+  };
+
+  const fecharModalVer = () => {
+    setModalVerVisivel(false);
+    setItemParaVer(null);
+  };
+
   const isTratamentoVencido = (dataTerminoString: string | Date): boolean => {
     if (!dataTerminoString) {
       return false;
@@ -155,7 +168,7 @@ export default function TratamentoScreen() {
       console.error("Erro ao processar data de término: ", error);
       return false;
     }
-  }
+  };
 
   if (loading) {
     return (
@@ -176,7 +189,6 @@ export default function TratamentoScreen() {
 
   return (
     <View style={styles.container}>
-      <Text>TELA DE TRATAMENTOS</Text>
 
       <ActionButton
         style={{ width: 320 }}
@@ -220,43 +232,58 @@ export default function TratamentoScreen() {
                   <Ionicons name={"medical"} size={36} color="white" />
                 </View>
 
-                <View>
-                  <Text style={[styles.textContent, { fontSize: 16 }]}>
-                    {item.nome}
-                  </Text>
+                <View style={styles.textContainer}>
+                  <View>
+                    <Text style={[styles.textContent, { fontSize: 22 }]}>
+                      {item.nome}
+                    </Text>
 
-                  <Text style={[styles.textContent, { fontSize: 16 }]}>
-                    {item.medicamento.nome}
-                  </Text>
+                    <Text style={[styles.textContent, { fontSize: 20, marginBottom: 10 }]}>
+                      {item.medicamento.nome}
+                    </Text>
 
-                  <Text style={[styles.textContent, { fontSize: 16 }]}>
-                    {item.instrucoes}
-                  </Text>
+                    <Text style={[styles.textContent, { fontSize: 18 }]}>
+                      {item.instrucoes}
+                    </Text>
 
-                  {isTratamentoVencido(item.dataDeTermino) ? (
-                    <View style={styles.dateContainer}>
-                      <Text style={styles.concluidoText}>
-                        <MaterialCommunityIcons name="check-circle" size={20} color="#fff" />
-                        {" "}Concluído
-                      </Text>
-                    </View>
-                  ) : (
-                    <View style={styles.dateContainer}>
-                      <Text style={styles.dateText}>
-                        {formatarData(item.dataDeInicio)}
-                      </Text>
+                    {isTratamentoVencido(item.dataDeTermino) ? (
+                      <View style={styles.dateContainerVencido}>
+                        <Text style={styles.concluidoText}>
+                          <MaterialCommunityIcons name="check-circle" size={20} color="#fff" />
+                          {" "}CONCLUÍDO
+                        </Text>
+                      </View>
+                    ) : (
+                      <View style={styles.dateContainer}>
+                        <Text style={styles.dateText}>
+                          {formatarData(item.dataDeInicio)}
+                        </Text>
 
-                      <Text style={styles.dateText}>
-                        {formatarData(item.dataDeTermino)}
-                      </Text>
+                        <Text style={styles.dateText}>
+                          {formatarData(item.dataDeTermino)}
+                        </Text>
 
 
-                    </View>
-                  )}
+                      </View>
+                    )}
+                  </View>
                 </View>
               </View>
 
               <View style={styles.cardBottomRow}>
+
+                <Pressable
+                  style={styles.pressableButton}
+                  onPress={() => { abrirModalVer(item) }}
+                  disabled={isDeleting}
+                >
+                  <MaterialCommunityIcons
+                    name="eye"
+                    size={24}
+                    color="black"
+                  />
+                </Pressable>
+
                 <Pressable
                   style={styles.pressableButton}
                   onPress={() => {
@@ -288,6 +315,72 @@ export default function TratamentoScreen() {
         }
       />
 
+      <Modal
+        visible={modalVerVisivel}
+        animationType="fade"
+        transparent={true}
+        onRequestClose={fecharModalVer}
+      >
+        <View style={styles.viewModalContainer}>
+          <View style={styles.viewModalContent}>
+            
+            <Text style={styles.viewModalTitle}>{itemParaVer?.nome}</Text>
+
+            <Text style={styles.viewModalSectionTitle}>Medicamento</Text>
+            <Text style={styles.viewModalText}>
+              Nome: {itemParaVer?.medicamento.nome}
+            </Text>
+            <Text style={styles.viewModalText}>
+              Dosagem: {itemParaVer?.dosagem}
+            </Text>
+            <Text style={styles.viewModalText}>
+              Instruções: {itemParaVer?.instrucoes || "Nenhuma"}
+            </Text>
+
+            <Text style={styles.viewModalSectionTitle}>Duração e Status</Text>
+            {isTratamentoVencido(itemParaVer?.dataDeTermino || "") ? (
+              <Text style={styles.viewModalText}>Status: Concluído</Text>
+            ) : (
+              <>
+                <Text style={styles.viewModalText}>
+                  Início: {formatarData(itemParaVer?.dataDeInicio || "")}
+                </Text>
+                <Text style={styles.viewModalText}>
+                  Fim: {formatarData(itemParaVer?.dataDeTermino || "")}
+                </Text>
+              </>
+            )}
+
+            <Text style={styles.viewModalSectionTitle}>Frequência e Alerta</Text>
+            <Text style={styles.viewModalText}>
+              Tipo: {itemParaVer?.tipoDeFrequencia}
+            </Text>
+            
+            {itemParaVer?.tipoDeFrequencia === 'INTERVALO_HORAS' && (
+               <Text style={styles.viewModalText}>
+                 Intervalo: A cada {itemParaVer?.intervaloEmHoras} horas
+               </Text>
+            )}
+            {itemParaVer?.tipoDeFrequencia === 'HORARIOS_ESPECIFICOS' && (
+               <Text style={styles.viewModalText}>
+                 Horários: {itemParaVer?.horariosEspecificos}
+               </Text>
+            )}
+
+            <Text style={styles.viewModalText}>
+              Alerta: {itemParaVer?.tipoDeAlerta}
+            </Text>
+
+            <ActionButton
+              style={{ marginTop: 20 }}
+              titulo="FECHAR"
+              onPress={fecharModalVer}
+            />
+
+          </View>
+        </View>
+      </Modal>
+
       <AlertModal
         visible={alertVisivel}
         title="CONFIRMAR EXCLUSÃO"
@@ -297,6 +390,8 @@ export default function TratamentoScreen() {
         confirmText="Excluir"
         isDestructive={true}
       />
+
+
     </View>
   );
 }

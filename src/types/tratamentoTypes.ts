@@ -37,10 +37,10 @@ export type TratamentoResponse = {
   instrucoes: string;
   dataDeInicio: string;
   dataDeTermino: string;
-  tipoDeFrequencia: TipoDeFrequencia;
+  tipoDeFrequencia: string;
   intervaloEmHoras: number;
   horariosEspecificos: string;
-  tipoDeAlerta: TipoDeAlerta
+  tipoDeAlerta: string
   status: TratamentoStatus;
   agendamentos: AgendamentoResumoResponse[];
   usuario: UsuarioResumoResponse;
