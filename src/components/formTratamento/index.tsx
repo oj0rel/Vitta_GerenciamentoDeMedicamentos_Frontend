@@ -414,12 +414,13 @@ export default function FormularioTratamento({
               <View style={styles.pickerContainer}>
                 <Picker
                   selectedValue={medicamentoSelecionado?.id}
-                  onValueChange={(itemId: number | null) => {
+                  onValueChange={(itemId: any) => {
                     if (itemId === null) {
                       handleMedicamentoSelecionadoChange(null);
                     } else {
+                      const itemIdNumerico = Number(itemId);
                       const medSelecionado = listaDeMedicamentos.find(
-                        (m) => m.id === itemId
+                        (m) => m.id === itemIdNumerico
                       );
                       handleMedicamentoSelecionadoChange(
                         medSelecionado || null
