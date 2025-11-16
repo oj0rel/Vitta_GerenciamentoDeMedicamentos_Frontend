@@ -4,8 +4,7 @@ export const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    justifyContent: "center",
-    paddingTop: 40,
+    paddingTop: 10,
   },
   flatList: {
     flex: 1,
@@ -47,9 +46,14 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     flexDirection: "row",
     gap: 10,
-    alignSelf: "flex-end", 
-    marginRight: 14,
+    justifyContent: "space-between",
     marginTop: 6,
+    paddingHorizontal: 14,
+  },
+  rightButtonsContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
   },
   pressableButton: {
     backgroundColor: '#fff',

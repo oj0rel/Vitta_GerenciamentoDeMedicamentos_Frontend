@@ -55,4 +55,11 @@ export const styles = StyleSheet.create({
     backgroundColor: "transparent",
     color: '#000',
   },
+  etapaAtiva: {
+    display: "flex",
+    width: "100%",
+  },
+  etapaOculta: {
+    display: "none",
+  },
 })

@@ -10,12 +10,30 @@ import { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
+  KeyboardAvoidingView,
   Modal,
+  Platform,
   Pressable,
   Text,
-  View,
+  View
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./styles";
+
+const MAPA_FREQUENCIA: Record<string, string> = {
+  'INTERVALO_HORAS': 'Intervalo de Horas',
+  'HORARIOS_ESPECIFICOS': 'Horários Específicos',
+};
+
+const MAPA_ALERTA: Record<string, string> = {
+  'NOTIFICACAO_PUSH': 'Notificação Push',
+  'ALARME': 'Alarme',
+};
+
+const formatarEnum = (valor: string | undefined, mapa: Record<string, string>) => {
+  if (!valor) return 'Não definido';
+  return mapa[valor] || valor;
+};
 
 export default function TratamentoScreen() {
   const { session } = useSession();
@@ -172,23 +190,23 @@ export default function TratamentoScreen() {
 
   if (loading) {
     return (
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
         <ActivityIndicator size="large" color="#0000ff" />
         <Text>Carregando...</Text>
-      </View>
+      </SafeAreaView>
     );
   }
 
   if (error) {
     return (
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
         <Text style={{ color: "red" }}>{error}</Text>
-      </View>
+      </SafeAreaView>
     );
   }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
 
       <ActionButton
         style={{ width: 320 }}
@@ -205,15 +223,18 @@ export default function TratamentoScreen() {
         transparent={true}
         onRequestClose={() => setModalVisivel(false)}
       >
-        <View style={styles.modalContainer}>
-          {modalVisivel && (
-            <FormularioTratamento
-              onClose={() => setModalVisivel(false)}
-              onSaveSuccess={carregarTratamentosCadastrados}
-              tratamentoParaEditar={itemEmEdicao}
-            />
-          )}
-        </View>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={{ flex: 1 }}
+        >
+          <View style={styles.modalContainer}>
+              <FormularioTratamento
+                onClose={() => setModalVisivel(false)}
+                onSaveSuccess={carregarTratamentosCadastrados}
+                tratamentoParaEditar={itemEmEdicao}
+              />
+          </View>
+        </KeyboardAvoidingView>
       </Modal>
 
       <Text style={styles.title}>SEUS TRATAMENTOS</Text>
@@ -284,26 +305,28 @@ export default function TratamentoScreen() {
                   />
                 </Pressable>
 
-                <Pressable
-                  style={styles.pressableButton}
-                  onPress={() => {
-                    console.log("DADO DA API:", item.tipoDeAlerta);
-                    console.log("TIPO DO DADO:", typeof item.tipoDeAlerta);
-                    abrirModalEdicao(item);
-                  }}
-                  disabled={isDeleting}
-                >
-                  <MaterialCommunityIcons
-                    name="pencil"
-                    size={24}
-                    color="black"
-                  />
-                </Pressable>
+                <View style={styles.rightButtonsContainer}>
+                  <Pressable
+                    style={styles.pressableButton}
+                    onPress={() => {
+                      console.log("DADO DA API:", item.tipoDeAlerta);
+                      console.log("TIPO DO DADO:", typeof item.tipoDeAlerta);
+                      abrirModalEdicao(item);
+                    }}
+                    disabled={isDeleting}
+                  >
+                    <MaterialCommunityIcons
+                      name="pencil"
+                      size={24}
+                      color="black"
+                    />
+                  </Pressable>
 
-                <DeletePressable
-                  onPress={() => handleDeletarTratamento(item.id)}
-                  disabled={isDeleting}
-                />
+                  <DeletePressable
+                    onPress={() => handleDeletarTratamento(item.id)}
+                    disabled={isDeleting}
+                  />
+                </View>
               </View>
             </View>
           </View>
@@ -317,9 +340,9 @@ export default function TratamentoScreen() {
 
       <Modal
         visible={modalVerVisivel}
-        animationType="fade"
+        animationType="slide"
         transparent={true}
-        onRequestClose={fecharModalVer}
+        onRequestClose={() => setModalVisivel(false)}
       >
         <View style={styles.viewModalContainer}>
           <View style={styles.viewModalContent}>
@@ -353,22 +376,22 @@ export default function TratamentoScreen() {
 
             <Text style={styles.viewModalSectionTitle}>Frequência e Alerta</Text>
             <Text style={styles.viewModalText}>
-              Tipo: {itemParaVer?.tipoDeFrequencia}
+              Tipo: {formatarEnum(itemParaVer?.tipoDeFrequencia, MAPA_FREQUENCIA)}
             </Text>
             
-            {itemParaVer?.tipoDeFrequencia === 'INTERVALO_HORAS' && (
+            {String(itemParaVer?.tipoDeFrequencia) === 'INTERVALO_HORAS' && (
                <Text style={styles.viewModalText}>
                  Intervalo: A cada {itemParaVer?.intervaloEmHoras} horas
                </Text>
             )}
-            {itemParaVer?.tipoDeFrequencia === 'HORARIOS_ESPECIFICOS' && (
+            {String(itemParaVer?.tipoDeFrequencia) === 'HORARIOS_ESPECIFICOS' && (
                <Text style={styles.viewModalText}>
                  Horários: {itemParaVer?.horariosEspecificos}
                </Text>
             )}
 
             <Text style={styles.viewModalText}>
-              Alerta: {itemParaVer?.tipoDeAlerta}
+              Alerta: {formatarEnum(itemParaVer?.tipoDeAlerta, MAPA_ALERTA)}
             </Text>
 
             <ActionButton
@@ -392,6 +415,6 @@ export default function TratamentoScreen() {
       />
 
 
-    </View>
+    </SafeAreaView>
   );
 }
