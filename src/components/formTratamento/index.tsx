@@ -13,7 +13,7 @@ import {
 } from "@/src/types/tratamentoTypes";
 import { Picker } from "@react-native-picker/picker";
 import { useEffect, useState } from "react";
-import { Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import { ActionButton } from "../actionButton/actionButton";
 import { FormDatePicker } from "../formDatePicker";
 import { FormInput } from "../formInput";
@@ -393,7 +393,7 @@ export default function FormularioTratamento({
   return (
     <View style={styles.modalContent}>
       <View style={styles.formBody}>
-        <View style={styles.formRequestBody}>
+        <ScrollView  style={styles.formRequestBody}>
           {errorMessage && (
             <View style={styles.errorContainer}>
               <Text style={styles.errorText}>{errorMessage}</Text>
@@ -539,7 +539,7 @@ export default function FormularioTratamento({
               </View>
             </>
           )}
-        </View>
+        </ScrollView>
       </View>
 
       {etapa === 1 && (

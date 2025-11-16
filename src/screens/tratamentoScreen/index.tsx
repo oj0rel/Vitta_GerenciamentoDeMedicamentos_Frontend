@@ -17,21 +17,27 @@ import {
   Text,
   View
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 import { styles } from "./styles";
 
 const MAPA_FREQUENCIA: Record<string, string> = {
-  'INTERVALO_HORAS': 'Intervalo de Horas',
-  'HORARIOS_ESPECIFICOS': 'Horários Específicos',
+  INTERVALO_HORAS: "Intervalo de Horas",
+  HORARIOS_ESPECIFICOS: "Horários Específicos",
 };
 
 const MAPA_ALERTA: Record<string, string> = {
-  'NOTIFICACAO_PUSH': 'Notificação Push',
-  'ALARME': 'Alarme',
+  NOTIFICACAO_PUSH: "Notificação Push",
+  ALARME: "Alarme",
 };
 
-const formatarEnum = (valor: string | undefined, mapa: Record<string, string>) => {
-  if (!valor) return 'Não definido';
+const formatarEnum = (
+  valor: string | undefined,
+  mapa: Record<string, string>
+) => {
+  if (!valor) return "Não definido";
   return mapa[valor] || valor;
 };
 
@@ -53,7 +59,11 @@ export default function TratamentoScreen() {
   );
 
   const [modalVerVisivel, setModalVerVisivel] = useState(false);
-  const [itemParaVer, setItemParaVer] = useState<TratamentoResponse | null>(null);
+  const [itemParaVer, setItemParaVer] = useState<TratamentoResponse | null>(
+    null
+  );
+
+  const insets = useSafeAreaInsets();
 
   const carregarTratamentosCadastrados = useCallback(async () => {
     if (!session) return;
@@ -178,7 +188,10 @@ export default function TratamentoScreen() {
       const hoje = new Date();
       hoje.setHours(0, 0, 0, 0);
 
-      const [ano, mes, dia] = String(dataTerminoString).split('T')[0].split('-').map(Number);
+      const [ano, mes, dia] = String(dataTerminoString)
+        .split("T")[0]
+        .split("-")
+        .map(Number);
       const dataTermino = new Date(ano, mes - 1, dia);
 
       return dataTermino < hoje;
@@ -206,8 +219,7 @@ export default function TratamentoScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-
+    <SafeAreaView style={[styles.container, { paddingTop: insets.top }]}>
       <ActionButton
         style={{ width: 320 }}
         titulo="ADICIONAR TRATAMENTO"
@@ -224,15 +236,15 @@ export default function TratamentoScreen() {
         onRequestClose={() => setModalVisivel(false)}
       >
         <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          behavior={Platform.OS === "ios" ? "padding" : "padding"}
           style={{ flex: 1 }}
         >
           <View style={styles.modalContainer}>
-              <FormularioTratamento
-                onClose={() => setModalVisivel(false)}
-                onSaveSuccess={carregarTratamentosCadastrados}
-                tratamentoParaEditar={itemEmEdicao}
-              />
+            <FormularioTratamento
+              onClose={() => setModalVisivel(false)}
+              onSaveSuccess={carregarTratamentosCadastrados}
+              tratamentoParaEditar={itemEmEdicao}
+            />
           </View>
         </KeyboardAvoidingView>
       </Modal>
@@ -241,11 +253,13 @@ export default function TratamentoScreen() {
 
       <FlatList
         style={styles.flatList}
-        contentContainerStyle={{ alignItems: "center" }}
+        contentContainerStyle={{
+          alignItems: "center",
+          paddingBottom: insets.bottom,
+        }}
         data={tratamentos}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
-
           <View style={styles.cardsContainer}>
             <View style={styles.cardContent}>
               <View style={styles.cardTopRow}>
@@ -259,7 +273,12 @@ export default function TratamentoScreen() {
                       {item.nome}
                     </Text>
 
-                    <Text style={[styles.textContent, { fontSize: 20, marginBottom: 10 }]}>
+                    <Text
+                      style={[
+                        styles.textContent,
+                        { fontSize: 20, marginBottom: 10 },
+                      ]}
+                    >
                       {item.medicamento.nome}
                     </Text>
 
@@ -270,8 +289,12 @@ export default function TratamentoScreen() {
                     {isTratamentoVencido(item.dataDeTermino) ? (
                       <View style={styles.dateContainerVencido}>
                         <Text style={styles.concluidoText}>
-                          <MaterialCommunityIcons name="check-circle" size={20} color="#fff" />
-                          {" "}CONCLUÍDO
+                          <MaterialCommunityIcons
+                            name="check-circle"
+                            size={20}
+                            color="#fff"
+                          />{" "}
+                          CONCLUÍDO
                         </Text>
                       </View>
                     ) : (
@@ -283,8 +306,6 @@ export default function TratamentoScreen() {
                         <Text style={styles.dateText}>
                           {formatarData(item.dataDeTermino)}
                         </Text>
-
-
                       </View>
                     )}
                   </View>
@@ -292,17 +313,14 @@ export default function TratamentoScreen() {
               </View>
 
               <View style={styles.cardBottomRow}>
-
                 <Pressable
                   style={styles.pressableButton}
-                  onPress={() => { abrirModalVer(item) }}
+                  onPress={() => {
+                    abrirModalVer(item);
+                  }}
                   disabled={isDeleting}
                 >
-                  <MaterialCommunityIcons
-                    name="eye"
-                    size={24}
-                    color="black"
-                  />
+                  <MaterialCommunityIcons name="eye" size={24} color="black" />
                 </Pressable>
 
                 <View style={styles.rightButtonsContainer}>
@@ -332,7 +350,7 @@ export default function TratamentoScreen() {
           </View>
         )}
         ListEmptyComponent={
-          <View style={styles.container}>
+          <View style={styles.emptyContainer}>
             <Text>Nenhum tratamento cadastrado.</Text>
           </View>
         }
@@ -346,7 +364,6 @@ export default function TratamentoScreen() {
       >
         <View style={styles.viewModalContainer}>
           <View style={styles.viewModalContent}>
-            
             <Text style={styles.viewModalTitle}>{itemParaVer?.nome}</Text>
 
             <Text style={styles.viewModalSectionTitle}>Medicamento</Text>
@@ -374,20 +391,24 @@ export default function TratamentoScreen() {
               </>
             )}
 
-            <Text style={styles.viewModalSectionTitle}>Frequência e Alerta</Text>
-            <Text style={styles.viewModalText}>
-              Tipo: {formatarEnum(itemParaVer?.tipoDeFrequencia, MAPA_FREQUENCIA)}
+            <Text style={styles.viewModalSectionTitle}>
+              Frequência e Alerta
             </Text>
-            
-            {String(itemParaVer?.tipoDeFrequencia) === 'INTERVALO_HORAS' && (
-               <Text style={styles.viewModalText}>
-                 Intervalo: A cada {itemParaVer?.intervaloEmHoras} horas
-               </Text>
+            <Text style={styles.viewModalText}>
+              Tipo:{" "}
+              {formatarEnum(itemParaVer?.tipoDeFrequencia, MAPA_FREQUENCIA)}
+            </Text>
+
+            {String(itemParaVer?.tipoDeFrequencia) === "INTERVALO_HORAS" && (
+              <Text style={styles.viewModalText}>
+                Intervalo: A cada {itemParaVer?.intervaloEmHoras} horas
+              </Text>
             )}
-            {String(itemParaVer?.tipoDeFrequencia) === 'HORARIOS_ESPECIFICOS' && (
-               <Text style={styles.viewModalText}>
-                 Horários: {itemParaVer?.horariosEspecificos}
-               </Text>
+            {String(itemParaVer?.tipoDeFrequencia) ===
+              "HORARIOS_ESPECIFICOS" && (
+              <Text style={styles.viewModalText}>
+                Horários: {itemParaVer?.horariosEspecificos}
+              </Text>
             )}
 
             <Text style={styles.viewModalText}>
@@ -399,7 +420,6 @@ export default function TratamentoScreen() {
               titulo="FECHAR"
               onPress={fecharModalVer}
             />
-
           </View>
         </View>
       </Modal>
@@ -413,8 +433,6 @@ export default function TratamentoScreen() {
         confirmText="Excluir"
         isDestructive={true}
       />
-
-
     </SafeAreaView>
   );
 }

@@ -6,6 +6,11 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     paddingTop: 10,
   },
+  emptyContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 100,
+  },
   flatList: {
     flex: 1,
     margin: 10,
@@ -64,8 +69,9 @@ export const styles = StyleSheet.create({
     height: 30,
   },
   modalContainer: {
-    flex: 1,
-    justifyContent: "flex-end",
+    flexGrow: 1,
+    justifyContent: "center",
+    alignItems: "center",
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   title: {
@@ -130,5 +136,9 @@ export const styles = StyleSheet.create({
     color: '#555',
     marginBottom: 5,
     paddingLeft: 5,
+  },
+  modalBackdrop: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
 })
