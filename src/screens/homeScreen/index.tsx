@@ -7,8 +7,17 @@ import { endOfMonth, format, isWithinInterval, startOfMonth } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useFocusEffect } from "expo-router";
 import { useCallback, useContext, useMemo, useState } from "react";
-import { FlatList, Pressable, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  ActivityIndicator,
+  FlatList,
+  Pressable,
+  Text,
+  View,
+} from "react-native";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 import { styles } from "./styles";
 
 export default function HomeScreen() {
@@ -23,34 +32,36 @@ export default function HomeScreen() {
   const [diaSelecionado, setDiaSelecionado] = useState<string | null>(null);
   const [mesVisivel, setMesVisivel] = useState(new Date());
 
+  const insets = useSafeAreaInsets();
+
   const { usuario } = useContext(AuthContext);
 
   const carregarAgendamentosDoMes = useCallback(async () => {
-      if (session) {
-        try {
-          setError(null);
+    if (session) {
+      try {
+        setError(null);
 
-          const inicioDoMes = startOfMonth(mesVisivel);
-          const fimDoMes = endOfMonth(mesVisivel);
+        const inicioDoMes = startOfMonth(mesVisivel);
+        const fimDoMes = endOfMonth(mesVisivel);
 
-          const dataInicio = formatarData(inicioDoMes);
-          const dataFim = formatarData(fimDoMes);
+        const dataInicio = formatarData(inicioDoMes);
+        const dataFim = formatarData(fimDoMes);
 
-          const data = await listarAgendamentos(session, dataInicio, dataFim);
+        const data = await listarAgendamentos(session, dataInicio, dataFim);
 
-          setAgendamentosDoMes(data);
-        } catch (error) {
-          setError("Falha ao carregar agendamentos.");
-          console.error(error);
-        } finally {
-          setLoading(false);
-        }
-      } else if (!session) {
+        setAgendamentosDoMes(data);
+      } catch (error) {
+        setError("Falha ao carregar agendamentos.");
+        console.error(error);
+      } finally {
         setLoading(false);
-        setError("Usuário não autenticado.");
       }
-    }, [session, mesVisivel]);
-  
+    } else if (!session) {
+      setLoading(false);
+      setError("Usuário não autenticado.");
+    }
+  }, [session, mesVisivel]);
+
   useFocusEffect(
     useCallback(() => {
       carregarAgendamentosDoMes();
@@ -97,10 +108,35 @@ export default function HomeScreen() {
     setDiaSelecionado(null);
   }, []);
 
+  if (loading) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <ActivityIndicator size="large" color="#0000ff" />
+        <Text>Carregando...</Text>
+      </SafeAreaView>
+    );
+  }
+
+  if (error) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <Text style={{ color: "red" }}>{error}</Text>
+        <View style={[styles.button, { marginTop: 20 }]}>
+            <ActionButton
+              titulo="SAIR (LOGOUT)"
+              onPress={() => {
+                signOut();
+              }}
+            />
+          </View>
+      </SafeAreaView>
+    );
+  }
+
   return (
-    <SafeAreaView style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+    <SafeAreaView style={[styles.container, { paddingTop: insets.top }]}>
       <FlatList
-        style={{ flex: 1,  }}
+        style={{ flex: 1 }}
         data={agendamentosParaExibir}
         keyExtractor={(item) => item.id.toString()}
         ListHeaderComponent={

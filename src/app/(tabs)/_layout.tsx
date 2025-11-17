@@ -1,4 +1,3 @@
-import { Colors } from "@/src/constants/Colors";
 import { useSession } from "@/src/contexts/authContext";
 import { Ionicons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -24,12 +23,7 @@ export default function TabsRootLayout() {
         tabBarActiveTintColor: '#1CBDCF',
         tabBarInactiveTintColor: 'gray',
         headerShown: false,
-        tabBarStyle: [
-          styles.bottomTab,
-          {
-            backgroundColor: Colors[colorScheme ?? 'light'].background
-          }
-        ],
+        tabBarStyle: styles.bottomTab,
       }}
     >
       <Tabs.Screen

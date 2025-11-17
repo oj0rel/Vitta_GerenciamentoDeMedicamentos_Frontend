@@ -1,4 +1,7 @@
-import { listarMedicamentos, medicamentoDeletar } from "@/src/api/medicamentoApi";
+import {
+  listarMedicamentos,
+  medicamentoDeletar,
+} from "@/src/api/medicamentoApi";
 import { ActionButton } from "@/src/components/actionButton/actionButton";
 import { AlertModal } from "@/src/components/alertModal";
 import { DeletePressable } from "@/src/components/deletePressable";
@@ -13,9 +16,30 @@ import {
   Modal,
   Pressable,
   Text,
-  View
+  View,
 } from "react-native";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 import { styles } from "./styles";
+
+const MAPA_TIPO_MEDICAMENTO: Record<string, string> = {
+  MG: "Miligramas",
+  G: "Gramas",
+  ML: "Mililitros",
+  GOTAS: "Gotas",
+  COMPRIMIDOS: "Comprimidos",
+  CAPSULAS: "Cápsulas",
+}
+
+const formatarEnum = (
+  valor: string | undefined,
+  mapa: Record<string, string>
+) => {
+  if (!valor) return "Não definido";
+  return mapa[valor] || valor;
+};
 
 export default function MedicamentoScreen() {
   const { session } = useSession();
@@ -30,7 +54,16 @@ export default function MedicamentoScreen() {
 
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const [itemEmEdicao, setItemEmEdicao] = useState<MedicamentoResponse | null>(null);
+  const [itemEmEdicao, setItemEmEdicao] = useState<MedicamentoResponse | null>(
+    null
+  );
+
+  const [modalVerVisivel, setModalVerVisivel] = useState(false);
+  const [itemParaVer, setItemParaVer] = useState<MedicamentoResponse | null>(
+    null
+  );
+
+  const insets = useSafeAreaInsets();
 
   const carregarMedicamentosCadastrados = useCallback(async () => {
     if (!session) return;
@@ -38,17 +71,17 @@ export default function MedicamentoScreen() {
     setLoading(true);
     setError(null);
 
-      try {
-        const data = await listarMedicamentos(session);
-        setMedicamentos(data);
-      } catch (error) {
-        setError("Falha ao carregar medicamentos.");
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
+    try {
+      const data = await listarMedicamentos(session);
+      setMedicamentos(data);
+    } catch (error) {
+      setError("Falha ao carregar medicamentos.");
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   }, [session]);
-    
+
   useEffect(() => {
     carregarMedicamentosCadastrados();
   }, [carregarMedicamentosCadastrados]);
@@ -68,7 +101,6 @@ export default function MedicamentoScreen() {
       setMedicamentos((medicamentosAnteriores) =>
         medicamentosAnteriores.filter((med) => med.id !== medicamentoId)
       );
-
     } catch (error) {
       console.error("Erro ao deletar medicamento: ", error);
       setError("Falha ao deletar o medicamento. Tente novamente.");
@@ -86,7 +118,7 @@ export default function MedicamentoScreen() {
 
     setItemParaDeletar(medicamentoId);
     setAlertVisivel(true);
-  }
+  };
 
   const onConfirmarDelete = () => {
     // se não tiver um item selecionado, não faz nada
@@ -119,6 +151,16 @@ export default function MedicamentoScreen() {
     setModalVisivel(true);
   };
 
+  const abrirModalVer = (medicamento: MedicamentoResponse) => {
+    setItemParaVer(medicamento);
+    setModalVerVisivel(true);
+  };
+
+  const fecharModalVer = () => {
+    setModalVerVisivel(false);
+    setItemParaVer(null);
+  };
+
   if (loading) {
     return (
       <View style={styles.container}>
@@ -137,14 +179,14 @@ export default function MedicamentoScreen() {
   }
 
   return (
-    <View style={styles.container}>
-      {/* <Text>Tela dos Medicamentos</Text> */}
-
+    <SafeAreaView style={[styles.container, { paddingTop: insets.top }]}>
       <ActionButton
         style={{ width: 320 }}
         titulo="ADICIONAR MEDICAMENTO"
         onPress={abrirModalCadastro}
-        icon={<MaterialCommunityIcons name="plus-circle" size={36} color="white" />}
+        icon={
+          <MaterialCommunityIcons name="plus-circle" size={36} color="white" />
+        }
       />
 
       <Modal
@@ -197,31 +239,84 @@ export default function MedicamentoScreen() {
               <View style={styles.cardBottomRow}>
                 <Pressable
                   style={styles.pressableButton}
-                  onPress={ () => {
-                    console.log("DADO DA API:", item.tipoUnidadeDeMedida);
-                    console.log("TIPO DO DADO:", typeof item.tipoUnidadeDeMedida);
-                    abrirModalEdicao(item);
+                  onPress={() => {
+                    abrirModalVer(item);
                   }}
                   disabled={isDeleting}
                 >
-                  <MaterialCommunityIcons name="pencil" size={24} color="black" />
+                  <MaterialCommunityIcons name="eye" size={24} color="black" />
                 </Pressable>
 
-                <DeletePressable
-                  onPress={() => handleDeletarMedicamento(item.id)}
-                  disabled={isDeleting}
-                />
-          
+                <View style={styles.rightButtonsContainer}>
+                  <Pressable
+                    style={styles.pressableButton}
+                    onPress={() => {
+                      console.log("DADO DA API:", item.tipoUnidadeDeMedida);
+                      console.log(
+                        "TIPO DO DADO:",
+                        typeof item.tipoUnidadeDeMedida
+                      );
+                      abrirModalEdicao(item);
+                    }}
+                    disabled={isDeleting}
+                  >
+                    <MaterialCommunityIcons
+                      name="pencil"
+                      size={24}
+                      color="black"
+                    />
+                  </Pressable>
+
+                  <DeletePressable
+                    onPress={() => handleDeletarMedicamento(item.id)}
+                    disabled={isDeleting}
+                  />
+                </View>
               </View>
             </View>
           </View>
         )}
         ListEmptyComponent={
-          <View style={styles.container}>
+          <View style={styles.emptyContainer}>
             <Text>Nenhum medicamento cadastrado.</Text>
           </View>
         }
       />
+      <Modal
+        visible={modalVerVisivel}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setModalVisivel(false)}
+      >
+        <View style={styles.viewModalContainer}>
+          <View style={styles.viewModalContent}>
+            <Text style={styles.viewModalTitle}>{itemParaVer?.nome}</Text>
+
+            <Text style={styles.viewModalSectionTitle}>Medicamento</Text>
+            <Text style={styles.viewModalText}>
+              Nome: {itemParaVer?.nome}
+            </Text>
+
+            <Text style={styles.viewModalText}>
+              Laboratório: {itemParaVer?.laboratorio}
+            </Text>
+
+            <Text style={styles.viewModalText}>
+              Principio Ativo: {itemParaVer?.principioAtivo}
+            </Text>
+
+            <Text style={styles.viewModalText}>
+              Tipo do medicamento: {formatarEnum(String(itemParaVer?.tipoUnidadeDeMedida), MAPA_TIPO_MEDICAMENTO)}
+            </Text>
+
+            <ActionButton
+              style={{ marginTop: 20 }}
+              titulo="FECHAR"
+              onPress={fecharModalVer}
+            />
+          </View>
+        </View>
+      </Modal>
 
       <AlertModal
         visible={alertVisivel}
@@ -232,6 +327,6 @@ export default function MedicamentoScreen() {
         confirmText="Excluir"
         isDestructive={true}
       />
-    </View>
+    </SafeAreaView>
   );
 }
