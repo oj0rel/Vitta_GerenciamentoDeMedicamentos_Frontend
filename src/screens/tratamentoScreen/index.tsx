@@ -11,10 +11,12 @@ import {
   ActivityIndicator,
   FlatList,
   KeyboardAvoidingView,
+  LayoutAnimation,
   Modal,
   Platform,
   Pressable,
   Text,
+  UIManager,
   View,
 } from "react-native";
 import {
@@ -40,6 +42,13 @@ const formatarEnum = (
   if (!valor) return "Não definido";
   return mapa[valor] || valor;
 };
+
+if (
+  Platform.OS === "android" &&
+  UIManager.setLayoutAnimationEnabledExperimental
+) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 
 export default function TratamentoScreen() {
   const { session } = useSession();
@@ -217,6 +226,28 @@ export default function TratamentoScreen() {
     });
   }, [tratamentos, filtroAtivo]);
 
+  const alterarFiltro = (novoFiltro: 'ativos' | 'concluídos') => {
+    if (filtroAtivo !== novoFiltro) {
+      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+      setFitlroAtivo(novoFiltro);
+    }
+  };
+
+  const contagem = useMemo(() => {
+    let ativos = 0;
+    let concluidos = 0;
+
+    tratamentos.forEach((t) => {
+      if (isTratamentoVencido(t.dataDeTermino)) {
+        concluidos++;
+      } else {
+        ativos++;
+      }
+    });
+
+    return { ativos, concluidos };
+  }, [tratamentos]);
+
   if (loading) {
     return (
       <SafeAreaView style={styles.container}>
@@ -273,7 +304,7 @@ export default function TratamentoScreen() {
             styles.filterButton,
             filtroAtivo === "ativos" && styles.filterButtonActive,
           ]}
-          onPress={() => setFitlroAtivo("ativos")}
+          onPress={() => alterarFiltro("ativos")}
         >
           <Text
             style={[
@@ -281,7 +312,7 @@ export default function TratamentoScreen() {
               filtroAtivo === "ativos" && styles.filterTextActive,
             ]}
           >
-            Em Andamento
+            Em Andamento ({contagem.ativos})
           </Text>
         </Pressable>
 
@@ -290,7 +321,7 @@ export default function TratamentoScreen() {
             styles.filterButton,
             filtroAtivo === "concluídos" && styles.filterButtonActive,
           ]}
-          onPress={() => setFitlroAtivo("concluídos")}
+          onPress={() => alterarFiltro("concluídos")}
         >
           <Text
             style={[
@@ -298,7 +329,7 @@ export default function TratamentoScreen() {
               filtroAtivo === "concluídos" && styles.filterTextActive,
             ]}
           >
-            Histórico
+            Histórico ({contagem.concluidos})
           </Text>
         </Pressable>
       </View>
