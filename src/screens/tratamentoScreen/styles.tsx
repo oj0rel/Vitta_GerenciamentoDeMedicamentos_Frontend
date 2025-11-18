@@ -5,6 +5,7 @@ export const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     paddingTop: 10,
+    marginBottom: 30,
   },
   emptyContainer: {
     alignItems: "center",
@@ -141,4 +142,30 @@ export const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
+  filterButtonContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: 10,
+    gap: 10,
+  },
+  filterButton: {
+  paddingVertical: 8,
+  paddingHorizontal: 20,
+  borderRadius: 20,
+  borderWidth: 1,
+  borderColor: '#ccc',
+  backgroundColor: "transparent",
+},
+filterButtonActive: {
+  backgroundColor: '#1CBDCF',
+  borderColor: '#1CBDCF',
+},
+filterText: {
+  fontSize: 14,
+  color: '#666',
+  fontWeight: "600",
+},
+filterTextActive: {
+  color: '#FFFFFF',
+},
 })

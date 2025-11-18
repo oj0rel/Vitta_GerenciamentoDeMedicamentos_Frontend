@@ -6,7 +6,7 @@ import FormularioTratamento from "@/src/components/formTratamento";
 import { useSession } from "@/src/contexts/authContext";
 import { TratamentoResponse } from "@/src/types/tratamentoTypes";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -15,7 +15,7 @@ import {
   Platform,
   Pressable,
   Text,
-  View
+  View,
 } from "react-native";
 import {
   SafeAreaView,
@@ -61,6 +61,10 @@ export default function TratamentoScreen() {
   const [modalVerVisivel, setModalVerVisivel] = useState(false);
   const [itemParaVer, setItemParaVer] = useState<TratamentoResponse | null>(
     null
+  );
+
+  const [filtroAtivo, setFitlroAtivo] = useState<"ativos" | "concluídos">(
+    "ativos"
   );
 
   const insets = useSafeAreaInsets();
@@ -201,6 +205,18 @@ export default function TratamentoScreen() {
     }
   };
 
+  const tratamentosFiltrados = useMemo(() => {
+    return tratamentos.filter((t) => {
+      const vencido = isTratamentoVencido(t.dataDeTermino);
+
+      if (filtroAtivo === "ativos") {
+        return !vencido;
+      } else {
+        return vencido;
+      }
+    });
+  }, [tratamentos, filtroAtivo]);
+
   if (loading) {
     return (
       <SafeAreaView style={styles.container}>
@@ -251,13 +267,49 @@ export default function TratamentoScreen() {
 
       <Text style={styles.title}>SEUS TRATAMENTOS</Text>
 
+      <View style={styles.filterButtonContainer}>
+        <Pressable
+          style={[
+            styles.filterButton,
+            filtroAtivo === "ativos" && styles.filterButtonActive,
+          ]}
+          onPress={() => setFitlroAtivo("ativos")}
+        >
+          <Text
+            style={[
+              styles.filterText,
+              filtroAtivo === "ativos" && styles.filterTextActive,
+            ]}
+          >
+            Em Andamento
+          </Text>
+        </Pressable>
+
+        <Pressable
+          style={[
+            styles.filterButton,
+            filtroAtivo === "concluídos" && styles.filterButtonActive,
+          ]}
+          onPress={() => setFitlroAtivo("concluídos")}
+        >
+          <Text
+            style={[
+              styles.filterText,
+              filtroAtivo === "concluídos" && styles.filterTextActive,
+            ]}
+          >
+            Histórico
+          </Text>
+        </Pressable>
+      </View>
+
       <FlatList
         style={styles.flatList}
         contentContainerStyle={{
           alignItems: "center",
           paddingBottom: insets.bottom,
         }}
-        data={tratamentos}
+        data={tratamentosFiltrados}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <View style={styles.cardsContainer}>
@@ -351,7 +403,9 @@ export default function TratamentoScreen() {
         )}
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
-            <Text>Nenhum tratamento cadastrado.</Text>
+            {filtroAtivo === "ativos"
+              ? "Nenhum tratamento em andamento."
+              : "Nenhum histórico de tratamentos concluídos."}
           </View>
         }
       />
