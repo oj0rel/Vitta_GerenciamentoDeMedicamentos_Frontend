@@ -1,7 +1,7 @@
 import { AgendamentoStatus } from "../enums/agendamento/agendamentoStatus";
 import { TipoDeAlerta } from "../enums/agendamento/tipoDeAlerta";
 import { MedicamentoHistoricoResumoResponse } from "./medicamentoHistoricoTypes";
-import { TratamentoResumoResponse } from "./tratamentoTypes";
+import { TratamentoResponse } from "./tratamentoTypes";
 import { UsuarioResumoResponse } from "./usuarioTypes";
 
 export type AgendamentoResponse = {
@@ -10,7 +10,7 @@ export type AgendamentoResponse = {
   tipoDeAlerta: TipoDeAlerta;
   status: AgendamentoStatus;
   usuario: UsuarioResumoResponse;
-  tratamento: TratamentoResumoResponse;
+  tratamento: TratamentoResponse;
   historicoDoMedicamentoTomado: MedicamentoHistoricoResumoResponse;
 }
 
@@ -19,4 +19,10 @@ export type AgendamentoResumoResponse = {
   horarioDoAgendamento: Date;
   tipoDeAlerta: TipoDeAlerta;
   status: AgendamentoStatus;
+}
+
+export interface RegistrarUsoRequest {
+  horaDoUso: string;
+  doseTomada: number;
+  observacao?: string;
 }

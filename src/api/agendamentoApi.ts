@@ -1,5 +1,6 @@
 import axios from "axios";
-import { AgendamentoResponse } from "../types/agendamentoTypes";
+import { AgendamentoResponse, RegistrarUsoRequest } from "../types/agendamentoTypes";
+import { MedicamentoHistoricoResumoResponse } from "../types/medicamentoHistoricoTypes";
 import apiManager from "./apiManager";
 
 export function formatarData(data: Date): string {
@@ -36,6 +37,34 @@ export const listarAgendamentos = async (
       console.error(`Erro ao listar agendamentos para o token: ${token}`, error);
     }
 
+    throw error;
+  }
+};
+
+export const concluirAgendamento = async (
+  token: string,
+  agendamentoId: number,
+  dadosUso: RegistrarUsoRequest
+): Promise<MedicamentoHistoricoResumoResponse> => {
+  try {
+    const response = await apiManager.post<MedicamentoHistoricoResumoResponse>(
+      `api/agendamentos/concluirAgendamento/${agendamentoId}`, 
+      dadosUso,
+      {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      }
+    );
+
+    return response.data;
+
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error(`Erro ao concluir agendamento: ${error.message}`, error.response?.data);
+    } else {
+      console.error(`Erro ao concluir agendamento para o ID: ${agendamentoId}`, error);
+    }
     throw error;
   }
 };
