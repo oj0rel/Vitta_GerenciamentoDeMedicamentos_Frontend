@@ -1,7 +1,8 @@
-import { formatarData, listarAgendamentos } from "@/src/api/agendamentoApi";
+import { concluirAgendamento, formatarData, listarAgendamentos } from "@/src/api/agendamentoApi";
 import { ActionButton } from "@/src/components/actionButton/actionButton";
 import Calendario from "@/src/components/agendaCalendar";
 import { AuthContext, useSession } from "@/src/contexts/authContext";
+import { AgendamentoStatus } from "@/src/enums/agendamento/agendamentoStatus";
 import { AgendamentoResponse } from "@/src/types/agendamentoTypes";
 import { endOfMonth, format, isWithinInterval, startOfMonth } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -9,6 +10,7 @@ import { useFocusEffect } from "expo-router";
 import { useCallback, useContext, useMemo, useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
   FlatList,
   Pressable,
   Text,
@@ -69,27 +71,19 @@ export default function HomeScreen() {
   );
 
   const agendamentosParaExibir = useMemo(() => {
+    const pendentes = agendamentosDoMes.filter((ag) => ag.status === AgendamentoStatus.PENDENTE);
+    
     if (diaSelecionado) {
-      return agendamentosDoMes.filter((ag) => {
-        const diaDoAgendamento = format(
-          new Date(ag.horarioDoAgendamento),
-          "yyyy-MM-dd"
-        );
-        return diaDoAgendamento === diaSelecionado;
-      });
+      return pendentes.filter((ag) => format(new Date(ag.horarioDoAgendamento), "yyyy-MM-dd") === diaSelecionado);
     }
 
     const hoje = new Date();
-    const dataFimFiltro = new Date();
-    dataFimFiltro.setDate(hoje.getDate() + 4);
+    hoje.setHours(0, 0, 0, 0);
+    const dataFim = new Date();
+    dataFim.setDate(hoje.getDate() + 4);
+    dataFim.setHours(23, 59, 59, 999);
 
-    return agendamentosDoMes.filter((ag) => {
-      const dataDoAgendamento = new Date(ag.horarioDoAgendamento);
-      return isWithinInterval(dataDoAgendamento, {
-        start: hoje,
-        end: dataFimFiltro,
-      });
-    });
+    return pendentes.filter((ag) => isWithinInterval(new Date(ag.horarioDoAgendamento), { start: hoje, end: dataFim }));
   }, [diaSelecionado, agendamentosDoMes]);
 
   const handleDiaPressionado = useCallback(
@@ -107,6 +101,27 @@ export default function HomeScreen() {
     setMesVisivel(novoMes);
     setDiaSelecionado(null);
   }, []);
+
+  const handleConcluir = async (agendamentoItem: AgendamentoResponse) => {
+    if (!session) return;
+    try {
+      setAgendamentosDoMes((prev) => prev.map((ag) => 
+         ag.id === agendamentoItem.id ? { ...ag, status: AgendamentoStatus.TOMADO } : ag
+      ));
+
+      const dadosConclusao = {
+        horaDoUso: new Date().toISOString(),
+        doseTomada: Number(agendamentoItem.tratamento.dosagem) || 1,
+        observacao: "Concluído via App",
+      };
+      
+      await concluirAgendamento(session, agendamentoItem.id, dadosConclusao);
+      Alert.alert("Sucesso", "Medicamento tomado!");
+    } catch (error: any) {
+      Alert.alert("Erro", error.response?.data?.message || "Falha ao registrar.");
+      carregarAgendamentosDoMes();
+    }
+  };
 
   if (loading) {
     return (
@@ -171,7 +186,10 @@ export default function HomeScreen() {
                   Medicamento: {item.tratamento.medicamento.nome}
                 </Text>
 
-                <Pressable style={styles.concluirPressable}>
+                <Pressable
+                  style={styles.concluirPressable}
+                  onPress={() => handleConcluir(item)}
+                >
                   <Text style={styles.textPressableContent}>CONCLUIR</Text>
                 </Pressable>
               </View>

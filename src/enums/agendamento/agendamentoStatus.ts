@@ -1,6 +1,6 @@
 export enum AgendamentoStatus {
-  INATIVO = 0,
-  PENDENTE = 1,
-  TOMADO = 2,
-  ATRASADO = 3
+  INATIVO = "INATIVO",
+  PENDENTE = "PENDENTE",
+  TOMADO = "TOMADO",
+  ATRASADO = "ATRASADO"
 }

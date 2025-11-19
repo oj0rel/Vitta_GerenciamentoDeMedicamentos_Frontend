@@ -5,7 +5,7 @@ type FormInputProps = {
     titulo: string;
     value: string;
     onChangeText?: ((text: string) => void) | undefined
-    placeHolder: string;
+    placeHolder?: string;
     secureTextEntry?: true;
     keyboardType?: KeyboardTypeOptions;
     autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
