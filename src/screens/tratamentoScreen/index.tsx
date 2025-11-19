@@ -267,15 +267,6 @@ export default function TratamentoScreen() {
 
   return (
     <SafeAreaView style={[styles.container, { paddingTop: insets.top }]}>
-      <ActionButton
-        style={{ width: 320 }}
-        titulo="ADICIONAR TRATAMENTO"
-        onPress={abrirModalCadastro}
-        icon={
-          <MaterialCommunityIcons name="plus-circle" size={36} color="white" />
-        }
-      />
-
       <Modal
         visible={modalVisivel}
         animationType="slide"
@@ -518,6 +509,16 @@ export default function TratamentoScreen() {
         confirmText="Excluir"
         isDestructive={true}
       />
+
+      <Pressable
+        style={({ pressed }) => [
+          styles.fab,
+          pressed && styles.fabPressed
+        ]}
+        onPress={abrirModalCadastro}
+      >
+        <MaterialCommunityIcons name="plus" size={30} color='#1CBDCF' />
+      </Pressable>
     </SafeAreaView>
   );
 }

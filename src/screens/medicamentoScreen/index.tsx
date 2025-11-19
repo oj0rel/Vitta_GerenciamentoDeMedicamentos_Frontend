@@ -31,7 +31,7 @@ const MAPA_TIPO_MEDICAMENTO: Record<string, string> = {
   GOTAS: "Gotas",
   COMPRIMIDOS: "Comprimidos",
   CAPSULAS: "Cápsulas",
-}
+};
 
 const formatarEnum = (
   valor: string | undefined,
@@ -180,15 +180,6 @@ export default function MedicamentoScreen() {
 
   return (
     <SafeAreaView style={[styles.container, { paddingTop: insets.top }]}>
-      <ActionButton
-        style={{ width: 320 }}
-        titulo="ADICIONAR MEDICAMENTO"
-        onPress={abrirModalCadastro}
-        icon={
-          <MaterialCommunityIcons name="plus-circle" size={36} color="white" />
-        }
-      />
-
       <Modal
         visible={modalVisivel}
         animationType="slide"
@@ -293,9 +284,7 @@ export default function MedicamentoScreen() {
             <Text style={styles.viewModalTitle}>{itemParaVer?.nome}</Text>
 
             <Text style={styles.viewModalSectionTitle}>Medicamento</Text>
-            <Text style={styles.viewModalText}>
-              Nome: {itemParaVer?.nome}
-            </Text>
+            <Text style={styles.viewModalText}>Nome: {itemParaVer?.nome}</Text>
 
             <Text style={styles.viewModalText}>
               Laboratório: {itemParaVer?.laboratorio}
@@ -306,7 +295,11 @@ export default function MedicamentoScreen() {
             </Text>
 
             <Text style={styles.viewModalText}>
-              Tipo do medicamento: {formatarEnum(String(itemParaVer?.tipoUnidadeDeMedida), MAPA_TIPO_MEDICAMENTO)}
+              Tipo do medicamento:{" "}
+              {formatarEnum(
+                String(itemParaVer?.tipoUnidadeDeMedida),
+                MAPA_TIPO_MEDICAMENTO
+              )}
             </Text>
 
             <ActionButton
@@ -327,6 +320,13 @@ export default function MedicamentoScreen() {
         confirmText="Excluir"
         isDestructive={true}
       />
+
+      <Pressable
+        style={({ pressed }) => [styles.fab, pressed && styles.fabPressed]}
+        onPress={abrirModalCadastro}
+      >
+        <MaterialCommunityIcons name="plus" size={30} color='#1CBDCF' />
+      </Pressable>
     </SafeAreaView>
   );
 }

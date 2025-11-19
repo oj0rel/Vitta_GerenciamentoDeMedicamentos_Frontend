@@ -168,4 +168,28 @@ filterText: {
 filterTextActive: {
   color: '#FFFFFF',
 },
-})
+fab: {
+    position: "absolute",
+    bottom: 70,
+    right: 20,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: '#fff',
+    justifyContent: "center",
+    alignItems: "center",
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    zIndex: 999,
+  },
+  fabPressed: {
+    opacity: 0.7, 
+    transform: [{ scale: 0.95 }],
+  },
+});
