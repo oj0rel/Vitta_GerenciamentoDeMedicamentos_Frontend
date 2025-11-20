@@ -2,49 +2,25 @@ import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
   container: {
-    width: "100%",
-    marginBottom: 14,
+    marginBottom: 10,
   },
   pickerContainer: {
-    backgroundColor: '#F0F0F0',
-    borderRadius: 8,
+    flexDirection: 'row',
+    justifyContent: 'space-between', // Espalha texto e ícone
+    alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#E0E0E0',
-    height: 60,
-    justifyContent: "center",
-    overflow: "hidden",
+    borderColor: '#ccc',
+    borderRadius: 8,
+    backgroundColor: '#fff',
+    height: 50,
+    marginBottom: 10,
   },
   picker: {
-    width: "100%",
-    height: "100%",
-    backgroundColor: "transparent",
-    color: '#000',
+    width: "85%", // Deixa espaço para o ícone
   },
   pickerText: {
-    paddingLeft: 10,
+    fontSize: 16,
+    color: "#000",
+    paddingHorizontal: 15,
   },
-  modalBackdrop: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  modalView: {
-    backgroundColor: "white",
-    borderRadius: 20,
-    padding: 20,
-    width: "90%",
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  calendarContainer: {
-    marginTop: 10,
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    overflow: "hidden",
-  }
 });
