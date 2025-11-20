@@ -154,13 +154,13 @@ export default function CadastroScreen() {
         </View>
 
         <ActionButton
-            titulo="VOLTAR"
-            onPress={ backToIndex }
+          titulo="CADASTRAR"
+          onPress={ handleCadastro }
         />
 
         <ActionButton
-            titulo="CADASTRAR"
-            onPress={ handleCadastro }
+          titulo="VOLTAR"
+          onPress={ backToIndex }
         />
 
       </View>

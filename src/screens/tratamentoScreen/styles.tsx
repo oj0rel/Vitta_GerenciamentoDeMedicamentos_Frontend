@@ -170,7 +170,7 @@ filterTextActive: {
 },
 fab: {
     position: "absolute",
-    bottom: 70,
+    bottom: 90,
     right: 20,
     width: 60,
     height: 60,

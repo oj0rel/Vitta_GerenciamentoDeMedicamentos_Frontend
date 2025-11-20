@@ -113,14 +113,15 @@ export default function LoginScreen() {
         </View>
 
         <ActionButton 
+          titulo="LOGIN"
+          onPress={ handleLogin }
+        />
+        
+        <ActionButton 
           titulo="VOLTAR"
           onPress={ backToIndex }
         />
 
-        <ActionButton 
-          titulo="LOGIN"
-          onPress={ handleLogin }
-        />
       </View>
 
       <Wave
