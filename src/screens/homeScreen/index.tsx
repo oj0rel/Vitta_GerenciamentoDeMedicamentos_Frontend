@@ -13,7 +13,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { endOfMonth, format, isWithinInterval, startOfMonth } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { router, useFocusEffect } from "expo-router";
-import { useCallback, useContext, useMemo, useState } from "react";
+import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -28,7 +28,16 @@ import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
+import {
+  agendarLembreteMedicamento,
+  cancelarTodasNotificacoes,
+  registrarNotificacoesAsync
+} from "../../services/notificacaoService";
 import { styles } from "./styles";
+
+useEffect(() => {
+  registrarNotificacoesAsync();
+}, []);
 
 const parseDateSafe = (dateInput: any): Date => {
   try {
@@ -77,9 +86,44 @@ export default function HomeScreen() {
         const dataInicio = formatarData(inicioDoMes);
         const dataFim = formatarData(fimDoMes);
 
-        const data = await listarAgendamentos(session, dataInicio, dataFim);
+        console.log("--- RECARREGANDO LISTA E NOTIFICAÇÕES ---");
 
+        const data = await listarAgendamentos(session, dataInicio, dataFim);
         setAgendamentosDoMes(data);
+
+        await cancelarTodasNotificacoes();
+
+        const agora = new Date();
+        
+        data.forEach(async (ag) => {
+            const dataAgendamento = parseDateSafe(ag.horarioDoAgendamento);
+            
+            if (String(ag.status) === AgendamentoStatus.PENDENTE && dataAgendamento > agora) {
+                
+                const nomeMed = ag.tratamento?.medicamento?.nome || "Medicamento";
+                
+                const doseValor = ag.tratamento?.dosagem; 
+                
+                const instrucoes = ag.tratamento?.instrucoes || "";
+
+                let corpoMensagem = `Tomar ${nomeMed}`;
+                
+                if (doseValor) {
+                    corpoMensagem += `. Dose: ${doseValor}`;
+                }
+                
+                if (instrucoes) {
+                    corpoMensagem += `. ${instrucoes}`;
+                }
+
+                await agendarLembreteMedicamento(
+                    "Hora do Remédio! 💊",
+                    corpoMensagem,
+                    dataAgendamento
+                );
+            }
+        });
+
       } catch (error) {
         setError("Falha ao carregar agendamentos.");
         console.error(error);

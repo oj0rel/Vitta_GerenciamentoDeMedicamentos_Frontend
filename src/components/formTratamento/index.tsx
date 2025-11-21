@@ -15,11 +15,21 @@ import { styles } from "./styles";
 
 const parseDateSafe = (data: any): Date | null => {
   if (!data) return null;
+
+  if (data instanceof Date) {
+    return isNaN(data.getTime()) ? null : data;
+  }
+
   try {
-    const d = new Date(data);
-    if (isNaN(d.getTime())) return null;
-    return d;
-  } catch { return null; }
+    const dateString = String(data).split("T")[0]; 
+    
+    const [ano, mes, dia] = dateString.split("-").map(Number);
+
+    return new Date(ano, mes - 1, dia, 12, 0, 0);
+
+  } catch {
+    return null;
+  }
 };
 
 const formatDataApi = (date: Date) => {
