@@ -7,6 +7,14 @@ export const styles = StyleSheet.create({
     paddingTop: 10,
     marginBottom: 30,
   },
+  headerContainer: {
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+  },
   emptyContainer: {
     alignItems: "center",
     justifyContent: "center",
@@ -28,14 +36,14 @@ export const styles = StyleSheet.create({
     borderRadius: 10,
     width: 320,
     height: 100,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   textContent: {
     color: '#fff',
     paddingLeft: 12,
-    paddingRight:12,
+    paddingRight: 12,
   },
   textPressableContent: {
     color: '#1CBDCF',
@@ -54,7 +62,7 @@ export const styles = StyleSheet.create({
   button: {
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 60
+    marginBottom: 60,
   },
   pdfContainer: {
     flexDirection: "row",

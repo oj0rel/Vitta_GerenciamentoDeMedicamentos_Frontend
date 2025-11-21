@@ -12,7 +12,7 @@ import { AgendamentoResponse } from "@/src/types/agendamentoTypes";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { endOfMonth, format, isWithinInterval, startOfMonth } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { useFocusEffect } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import { useCallback, useContext, useMemo, useState } from "react";
 import {
   ActivityIndicator,
@@ -211,6 +211,17 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={[styles.container, { paddingTop: insets.top }]}>
+
+      <View style={styles.headerContainer}>
+          <Pressable onPress={() => router.push("../perfil")}>
+              <MaterialCommunityIcons name="account-circle" size={40} color='#1CBDCF' />
+          </Pressable>
+
+          <Text style={{ fontSize: 20, fontWeight: "bold", color: '#1CBDCF', fontFamily: "Inria Sans" }}>
+              Vitta
+          </Text>
+      </View>
+
       <FlatList
         style={{ flex: 1 }}
         data={agendamentosParaExibir}
