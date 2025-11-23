@@ -1,7 +1,7 @@
 import { UsuarioCadastroData, UsuarioLoginData } from "@/src/types/authTypes";
+import * as SecureStore from 'expo-secure-store';
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { usuarioCadastro, usuarioLogin } from "../api/usuarioApi";
-import { useStorageState } from "../hooks/useStorageState";
 import { UsuarioResponse } from "../types/usuarioTypes";
 
 type AuthContextData = {
@@ -18,62 +18,89 @@ export const AuthContext = React.createContext<AuthContextData>({
   signIn: async () => {},
   signOut: () => null,
   session: null,
-  isLoading: false,
+  isLoading: true,
   usuario: null,
 });
 
 export function useSession() {
   const value = React.useContext(AuthContext);
-
   if (process.env.NODE_ENV !== "production") {
     if (!value) {
-      throw new Error("useSession must be wrapped in a <SessionProvider />")
+      throw new Error("useSession must be wrapped in a <AuthProvider />")
     }
   }
-
   return value;
 }
 
-export function SessionProvider(props: React.PropsWithChildren) {
-  const [[isLoading, session], setSession] = useStorageState("session");
+export function AuthProvider(props: React.PropsWithChildren) {
+  const [session, setSession] = useState<string | null>(null);
   const [usuario, setUsuario] = useState<UsuarioResponse | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if(!session) {
-      setUsuario(null);
+    async function loadStorageData() {
+      try {
+        setIsLoading(true);
+        
+        const storedToken = await SecureStore.getItemAsync('userToken');
+        const storedUser = await SecureStore.getItemAsync('userData');
+
+        if (storedToken && storedUser) {
+          setSession(storedToken);
+          setUsuario(JSON.parse(storedUser));
+        }
+      } catch (error) {
+        console.error("Erro ao restaurar sessão:", error);
+        await signOut(); 
+      } finally {
+        setIsLoading(false);
+      }
     }
-  }, [session])
+
+    loadStorageData();
+  }, []);
 
   const signUp = useCallback(async (data: UsuarioCadastroData) =>{
     try {
-      const response = await usuarioCadastro(data)
-        if (response.token && response.usuario) {
-          setUsuario(response.usuario);
-          setSession(response.token);
-        }
-      } catch (error) {
-          console.error("Erro no signUp: ", error);
-          throw error;
+      const response = await usuarioCadastro(data);
+      
+      if (response.token && response.usuario) {
+        setSession(response.token);
+        setUsuario(response.usuario);
+
+        await SecureStore.setItemAsync('userToken', response.token);
+        await SecureStore.setItemAsync('userData', JSON.stringify(response.usuario));
+      }
+    } catch (error) {
+      console.error("Erro no signUp: ", error);
+      throw error;
     }
-  }, [setSession, setUsuario]);
+  }, []);
 
   const signIn = useCallback(async (data: UsuarioLoginData) => {
     try {
       const response = await usuarioLogin(data);
+      
       if (response.token && response.usuario) {
-        setUsuario(response.usuario);
         setSession(response.token);
+        setUsuario(response.usuario);
+
+        await SecureStore.setItemAsync('userToken', response.token);
+        await SecureStore.setItemAsync('userData', JSON.stringify(response.usuario));
       }
     } catch (error) {
       console.error("Erro no signIn: ", error);
       throw error;
     }
-  }, [setSession, setUsuario]);
+  }, []);
 
-  const signOut = useCallback(() => {
+  const signOut = useCallback(async () => {
     setSession(null);
     setUsuario(null);
-  }, [setSession, setUsuario]);
+    
+    await SecureStore.deleteItemAsync('userToken');
+    await SecureStore.deleteItemAsync('userData');
+  }, []);
 
   const providerValue = useMemo(() => ({
     signUp,
@@ -85,10 +112,8 @@ export function SessionProvider(props: React.PropsWithChildren) {
   }), [signUp, signIn, signOut, session, isLoading, usuario]);
 
   return (
-    <AuthContext
-      value={providerValue}
-    >
+    <AuthContext.Provider value={providerValue}>
       {props.children}
-    </AuthContext>
+    </AuthContext.Provider>
   )
 }

@@ -226,7 +226,7 @@ export default function TratamentoScreen() {
     });
   }, [tratamentos, filtroAtivo]);
 
-  const alterarFiltro = (novoFiltro: 'ativos' | 'concluídos') => {
+  const alterarFiltro = (novoFiltro: "ativos" | "concluídos") => {
     if (filtroAtivo !== novoFiltro) {
       LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
       setFitlroAtivo(novoFiltro);
@@ -333,96 +333,99 @@ export default function TratamentoScreen() {
         }}
         data={tratamentosFiltrados}
         keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.cardsContainer}>
-            <View style={styles.cardContent}>
-              <View style={styles.cardTopRow}>
-                <View>
-                  <Ionicons name={"medical"} size={36} color="white" />
-                </View>
+        renderItem={({ item }) => {
+          const isConcluido = isTratamentoVencido(item.dataDeTermino);
 
-                <View style={styles.textContainer}>
+          return (
+            <View style={styles.cardsContainer}>
+              <View style={styles.cardContent}>
+                <View style={styles.cardTopRow}>
                   <View>
-                    <Text style={[styles.textContent, { fontSize: 22 }]}>
-                      {item.nome}
-                    </Text>
+                    <Ionicons name={"medical"} size={36} color="white" />
+                  </View>
 
-                    <Text
-                      style={[
-                        styles.textContent,
-                        { fontSize: 20, marginBottom: 10 },
-                      ]}
-                    >
-                      {item.medicamento.nome}
-                    </Text>
+                  <View style={styles.textContainer}>
+                    <View>
+                      <Text style={[styles.textContent, { fontSize: 22 }]}>
+                        {item.nome}
+                      </Text>
 
-                    <Text style={[styles.textContent, { fontSize: 18 }]}>
-                      {item.instrucoes}
-                    </Text>
+                      <Text
+                        style={[
+                          styles.textContent,
+                          { fontSize: 20, marginBottom: 10 },
+                        ]}
+                      >
+                        {item.medicamento.nome}
+                      </Text>
 
-                    {isTratamentoVencido(item.dataDeTermino) ? (
-                      <View style={styles.dateContainerVencido}>
-                        <Text style={styles.concluidoText}>
-                          <MaterialCommunityIcons
-                            name="check-circle"
-                            size={20}
-                            color="#fff"
-                          />{" "}
-                          CONCLUÍDO
-                        </Text>
-                      </View>
-                    ) : (
-                      <View style={styles.dateContainer}>
-                        <Text style={styles.dateText}>
-                          {formatarData(item.dataDeInicio)}
-                        </Text>
+                      <Text style={[styles.textContent, { fontSize: 18 }]}>
+                        {item.instrucoes}
+                      </Text>
 
-                        <Text style={styles.dateText}>
-                          {formatarData(item.dataDeTermino)}
-                        </Text>
-                      </View>
-                    )}
+                      {isConcluido ? (
+                        <View style={styles.dateContainerVencido}>
+                          <Text style={styles.concluidoText}>
+                            <MaterialCommunityIcons
+                              name="check-circle"
+                              size={20}
+                              color="#fff"
+                            />{" "}
+                            CONCLUÍDO
+                          </Text>
+                        </View>
+                      ) : (
+                        <View style={styles.dateContainer}>
+                          <Text style={styles.dateText}>
+                            {formatarData(item.dataDeInicio)}
+                          </Text>
+                          <Text style={styles.dateText}>
+                            {formatarData(item.dataDeTermino)}
+                          </Text>
+                        </View>
+                      )}
+                    </View>
                   </View>
                 </View>
-              </View>
 
-              <View style={styles.cardBottomRow}>
-                <Pressable
-                  style={styles.pressableButton}
-                  onPress={() => {
-                    abrirModalVer(item);
-                  }}
-                  disabled={isDeleting}
-                >
-                  <MaterialCommunityIcons name="eye" size={24} color="black" />
-                </Pressable>
-
-                <View style={styles.rightButtonsContainer}>
+                <View style={styles.cardBottomRow}>
                   <Pressable
                     style={styles.pressableButton}
-                    onPress={() => {
-                      console.log("DADO DA API:", item.tipoDeAlerta);
-                      console.log("TIPO DO DADO:", typeof item.tipoDeAlerta);
-                      abrirModalEdicao(item);
-                    }}
+                    onPress={() => abrirModalVer(item)}
                     disabled={isDeleting}
                   >
                     <MaterialCommunityIcons
-                      name="pencil"
+                      name="eye"
                       size={24}
                       color="black"
                     />
                   </Pressable>
 
-                  <DeletePressable
-                    onPress={() => handleDeletarTratamento(item.id)}
-                    disabled={isDeleting}
-                  />
+                  <View style={styles.rightButtonsContainer}>
+                    {!isConcluido && (
+                      <Pressable
+                        style={styles.pressableButton}
+                        onPress={() => abrirModalEdicao(item)}
+                        disabled={isDeleting}
+                      >
+                        <MaterialCommunityIcons
+                          name="pencil"
+                          size={24}
+                          color="black"
+                        />
+                      </Pressable>
+                    )}
+
+                    <DeletePressable
+                      onPress={() => handleDeletarTratamento(item.id)}
+                      disabled={isDeleting}
+                    />
+                  </View>
                 </View>
               </View>
             </View>
-          </View>
-        )}
+          );
+        }}
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
             {filtroAtivo === "ativos"
@@ -511,13 +514,10 @@ export default function TratamentoScreen() {
       />
 
       <Pressable
-        style={({ pressed }) => [
-          styles.fab,
-          pressed && styles.fabPressed
-        ]}
+        style={({ pressed }) => [styles.fab, pressed && styles.fabPressed]}
         onPress={abrirModalCadastro}
       >
-        <MaterialCommunityIcons name="plus" size={30} color='#1CBDCF' />
+        <MaterialCommunityIcons name="plus" size={30} color="#1CBDCF" />
       </Pressable>
     </SafeAreaView>
   );

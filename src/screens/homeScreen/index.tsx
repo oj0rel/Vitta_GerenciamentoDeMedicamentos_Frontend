@@ -35,10 +35,6 @@ import {
 } from "../../services/notificacaoService";
 import { styles } from "./styles";
 
-useEffect(() => {
-  registrarNotificacoesAsync();
-}, []);
-
 const parseDateSafe = (dateInput: any): Date => {
   try {
     if (!dateInput) return new Date();
@@ -135,6 +131,10 @@ export default function HomeScreen() {
       setError("Usuário não autenticado.");
     }
   }, [session, mesVisivel]);
+
+  useEffect(() => {
+    registrarNotificacoesAsync();
+  }, []);
 
   useFocusEffect(
     useCallback(() => {
@@ -267,7 +267,7 @@ export default function HomeScreen() {
       </View>
 
       <FlatList
-        style={{ flex: 1 }}
+        style={{ flex: 1, marginBottom: 25 }}
         data={agendamentosParaExibir}
         keyExtractor={(item) => item.id.toString()}
         ListHeaderComponent={
@@ -348,16 +348,6 @@ export default function HomeScreen() {
             </View>
           </View>
         )}
-        ListFooterComponent={
-          <View style={[styles.button, { marginTop: 20 }]}>
-            <ActionButton
-              titulo="SAIR (LOGOUT)"
-              onPress={() => {
-                signOut();
-              }}
-            />
-          </View>
-        }
       />
 
       <Modal
