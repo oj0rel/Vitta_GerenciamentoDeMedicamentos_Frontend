@@ -51,6 +51,7 @@ const parseDateSafe = (dateInput: any): Date => {
 
 export default function HomeScreen() {
   const { signOut, session } = useSession();
+
   const [agendamentos, setAgendamentos] = useState<AgendamentoResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -133,8 +134,12 @@ export default function HomeScreen() {
   }, [session, mesVisivel]);
 
   useEffect(() => {
+    if (!session) {
+      return;
+    }
+
     registrarNotificacoesAsync();
-  }, []);
+  }, [session]);
 
   useFocusEffect(
     useCallback(() => {
