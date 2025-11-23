@@ -2,10 +2,6 @@ import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
   modalContent: {
-    gap: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 140,
     zIndex: 1,
   },
   formBody: {

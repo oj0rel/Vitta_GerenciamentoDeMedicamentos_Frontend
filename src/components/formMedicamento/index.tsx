@@ -5,6 +5,7 @@ import { MedicamentoCadastroData, MedicamentoResponse } from "@/src/types/medica
 import { Picker } from "@react-native-picker/picker";
 import { useState } from "react";
 import { Text, View } from "react-native";
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { ActionButton } from "../actionButton/actionButton";
 import { FormInput } from "../formInput";
 import { styles } from "./styles";
@@ -133,7 +134,14 @@ export default function FormularioMedicamento({
   };
 
   return (
-    <View style={styles.modalContent}>
+    <KeyboardAwareScrollView
+      style={{ flex: 1 }}
+      resetScrollToCoords={{ x: 0, y: 0 }}
+      contentContainerStyle={[styles.modalContent, { flexGrow: 1, justifyContent: "center", alignItems: "center"  }]}
+      scrollEnabled={true}
+      enableOnAndroid={true}
+      bounces={false}
+    >
 
       <View style={styles.formBody}>
         <View style={styles.formRequestBody}>
@@ -204,6 +212,6 @@ export default function FormularioMedicamento({
         disabled={isLoading}
       />
 
-    </View>
+    </KeyboardAwareScrollView>
   );
 }
