@@ -4,17 +4,18 @@ import LogoComponent from "@/src/components/logoComponent";
 import { useSession } from "@/src/contexts/authContext";
 import { router } from "expo-router";
 import { useState } from "react";
-import { ScrollView, Text, View } from "react-native";
+import { Text, View } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import Wave from "react-native-waves";
 import { styles } from "./styles";
 
 export default function CadastroScreen() {
   const { signUp, signIn } = useSession();
 
-  const [nome, setNome] = useState('');
-  const [telefone, setTelefone] = useState('');
-  const [email, setEmail] = useState('');
-  const [senha, setSenha] = useState('');
+  const [nome, setNome] = useState("");
+  const [telefone, setTelefone] = useState("");
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -30,7 +31,7 @@ export default function CadastroScreen() {
     }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      return 'Por favor, insira um email válido.';
+      return "Por favor, insira um email válido.";
     }
     if (!senha) {
       return "O campo Senha é obrigatório.";
@@ -40,14 +41,13 @@ export default function CadastroScreen() {
     }
 
     return null;
-  }
+  };
 
   const backToIndex = async () => {
-    router.replace('/');
-  }
-  
-  const handleCadastro = async () => {
+    router.replace("/");
+  };
 
+  const handleCadastro = async () => {
     setErrorMessage(null);
 
     const validationError = validateForm();
@@ -70,10 +70,12 @@ export default function CadastroScreen() {
         senha: senha,
       });
 
-      router.replace('/home');
+      router.replace("/home");
     } catch (error) {
       console.error(error);
-      setErrorMessage("Não foi possível realizar o cadastro. Verifique os dados e tente novamente.");
+      setErrorMessage(
+        "Não foi possível realizar o cadastro. Verifique os dados e tente novamente."
+      );
     }
   };
 
@@ -98,22 +100,25 @@ export default function CadastroScreen() {
   };
 
   return (
-    <ScrollView
-      style={{ flex: 1, marginTop: 30, }}
-      contentContainerStyle={styles.container}
-      >
-
+    <KeyboardAwareScrollView
+      style={{ flex: 1 }}
+      resetScrollToCoords={{ x: 0, y: 0 }}
+      contentContainerStyle={[
+        styles.modalContent,
+        { flexGrow: 1, justifyContent: "center", alignItems: "center" },
+      ]}
+      scrollEnabled={true}
+      enableOnAndroid={true}
+      bounces={false}
+    >
       <View style={styles.screenContent}>
         <LogoComponent />
 
         <View style={styles.formBox}>
           <View style={styles.formBody}>
-
             {errorMessage && (
               <View style={styles.errorContainer}>
-                <Text style={styles.errorText}>
-                  {errorMessage}
-                </Text>
+                <Text style={styles.errorText}>{errorMessage}</Text>
               </View>
             )}
 
@@ -141,7 +146,7 @@ export default function CadastroScreen() {
               keyboardType="email-address"
               autoCapitalize="none"
             />
-                
+
             <FormInput
               titulo="Senha"
               value={senha}
@@ -149,20 +154,12 @@ export default function CadastroScreen() {
               placeHolder="Digite uma senha"
               secureTextEntry
             />
-
           </View>
         </View>
 
-        <ActionButton
-          titulo="CADASTRAR"
-          onPress={ handleCadastro }
-        />
+        <ActionButton titulo="CADASTRAR" onPress={handleCadastro} />
 
-        <ActionButton
-          titulo="VOLTAR"
-          onPress={ backToIndex }
-        />
-
+        <ActionButton titulo="VOLTAR" onPress={backToIndex} />
       </View>
 
       <Wave
@@ -171,7 +168,8 @@ export default function CadastroScreen() {
         speed={4}
         maxPoints={5}
         delta={36}
-        color="#1CBDCF" />
-    </ScrollView>
+        color="#1CBDCF"
+      />
+    </KeyboardAwareScrollView>
   );
 }

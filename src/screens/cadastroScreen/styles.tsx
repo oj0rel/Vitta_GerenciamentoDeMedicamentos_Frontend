@@ -1,6 +1,9 @@
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
+  modalContent: {
+    zIndex: 1,
+  },
   container: {
     gap: 1,
   },
