@@ -4,6 +4,7 @@
     "slug": "vitta",
     "version": "1.0.0",
     "orientation": "portrait",
+    "icon": "./src/assets/images/logo_vitta.png",
     "scheme": "vitta",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -26,6 +27,7 @@
       "output": "static"
     },
     "splash": {
+      "image": "./src/assets/images/logo_vitta.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
