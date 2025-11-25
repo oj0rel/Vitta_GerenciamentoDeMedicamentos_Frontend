@@ -128,6 +128,7 @@ export default function CadastroScreen() {
               onChangeText={handleNomeChange}
               placeHolder="Digite seu nome"
               autoCapitalize="words"
+              iconName="person"
             />
 
             <FormInput
@@ -136,6 +137,7 @@ export default function CadastroScreen() {
               onChangeText={handleTelefoneChange}
               placeHolder="Digite seu número de telefone"
               keyboardType="phone-pad"
+              iconName="phone"
             />
 
             <FormInput
@@ -145,6 +147,7 @@ export default function CadastroScreen() {
               placeHolder="Digite seu email: ..@gmail.com"
               keyboardType="email-address"
               autoCapitalize="none"
+              iconName="email"
             />
 
             <FormInput
@@ -153,6 +156,7 @@ export default function CadastroScreen() {
               onChangeText={handleSenhaChange}
               placeHolder="Digite uma senha"
               secureTextEntry
+              iconName="lock"
             />
           </View>
         </View>

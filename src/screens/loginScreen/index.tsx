@@ -104,6 +104,7 @@ export default function LoginScreen() {
               placeHolder="Digite seu email: ..@gmail.com"
               keyboardType="email-address"
               autoCapitalize="none"
+              iconName="email"
             />
 
             <FormInput
@@ -112,6 +113,7 @@ export default function LoginScreen() {
               onChangeText={handleSenhaChange}
               placeHolder="Digite uma senha"
               secureTextEntry
+              iconName="lock"
             />
           </View>
         </View>
