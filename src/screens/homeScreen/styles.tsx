@@ -4,7 +4,6 @@ export const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    paddingTop: 10,
     marginBottom: 30,
   },
   headerContainer: {
@@ -19,6 +18,13 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     paddingVertical: 100,
+  },
+  emptyText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: '#999',
+    textAlign: "center",
+    fontWeight: "500",
   },
   headerTextFlatList: {
     marginBottom: 12,
@@ -132,5 +138,11 @@ export const styles = StyleSheet.create({
   pressTextConfirmar: {
     color: "white",
     fontWeight: "bold",
+  },
+  logoHeader: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: '#1CBDCF',
+    fontFamily: "Inria Sans",
   },
 });

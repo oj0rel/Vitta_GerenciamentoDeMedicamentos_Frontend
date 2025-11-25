@@ -12,7 +12,7 @@ import { AgendamentoResponse } from "@/src/types/agendamentoTypes";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { endOfMonth, format, isWithinInterval, startOfMonth } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { router, useFocusEffect } from "expo-router";
+import { useFocusEffect } from "expo-router";
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
@@ -259,22 +259,26 @@ export default function HomeScreen() {
   }
 
   return (
-    <SafeAreaView style={[styles.container, { paddingTop: insets.top }]}>
-
-      <View style={styles.headerContainer}>
-          <Pressable onPress={() => router.push("../perfil")}>
-              <MaterialCommunityIcons name="account-circle" size={40} color='#1CBDCF' />
-          </Pressable>
-
-          <Text style={{ fontSize: 20, fontWeight: "bold", color: '#1CBDCF', fontFamily: "Inria Sans" }}>
-              Vitta
-          </Text>
-      </View>
+    <SafeAreaView style={styles.container}>
 
       <FlatList
         style={{ flex: 1, marginBottom: 25 }}
         data={agendamentosParaExibir}
         keyExtractor={(item) => item.id.toString()}
+        ListEmptyComponent={
+          <View style={styles.emptyContainer}>
+            <MaterialCommunityIcons 
+              name="calendar-check-outline" 
+              size={64} 
+              color='#d0d0d0'
+            />
+            <Text style={styles.emptyText}>
+              {diaSelecionado 
+                ? "Nenhum agendamento para este dia." 
+                : "Nenhum agendamento futuro encontrado."}
+            </Text>
+          </View>
+        }
         ListHeaderComponent={
           <>
             <Calendario

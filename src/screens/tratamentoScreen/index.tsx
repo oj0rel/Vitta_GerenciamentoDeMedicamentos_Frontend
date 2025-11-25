@@ -266,7 +266,7 @@ export default function TratamentoScreen() {
   }
 
   return (
-    <SafeAreaView style={[styles.container, { paddingTop: insets.top }]}>
+    <SafeAreaView style={styles.container}>
       <Modal
         visible={modalVisivel}
         animationType="slide"
