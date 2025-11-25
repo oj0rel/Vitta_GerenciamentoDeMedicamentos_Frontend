@@ -204,6 +204,14 @@ export default function MedicamentoScreen() {
         contentContainerStyle={{ alignItems: "center" }}
         data={medicamentos}
         keyExtractor={(item) => item.id.toString()}
+        ListEmptyComponent={
+          <View style={styles.emptyContainer}>
+            <MaterialCommunityIcons name="pill" size={64} color='#d0d0d0' />
+            <Text style={styles.emptyText}>
+              Nenhum medicamento cadastrado no estoque.
+            </Text>
+          </View>
+        }
         renderItem={({ item }) => (
           <View style={styles.cardsContainer}>
             <View style={styles.cardContent}>
@@ -267,11 +275,6 @@ export default function MedicamentoScreen() {
             </View>
           </View>
         )}
-        ListEmptyComponent={
-          <View style={styles.emptyContainer}>
-            <Text>Nenhum medicamento cadastrado.</Text>
-          </View>
-        }
       />
       <Modal
         visible={modalVerVisivel}
@@ -325,7 +328,7 @@ export default function MedicamentoScreen() {
         style={({ pressed }) => [styles.fab, pressed && styles.fabPressed]}
         onPress={abrirModalCadastro}
       >
-        <MaterialCommunityIcons name="plus" size={30} color='#1CBDCF' />
+        <MaterialCommunityIcons name="plus" size={30} color="#1CBDCF" />
       </Pressable>
     </SafeAreaView>
   );

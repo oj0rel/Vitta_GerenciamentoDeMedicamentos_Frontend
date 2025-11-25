@@ -11,6 +11,13 @@ export const styles = StyleSheet.create({
     justifyContent: "center",
     paddingVertical: 100,
   },
+  emptyText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: '#999',
+    textAlign: "center",
+    fontWeight: "500",
+  },
   flatList: {
     flex: 1,
     margin: 10,

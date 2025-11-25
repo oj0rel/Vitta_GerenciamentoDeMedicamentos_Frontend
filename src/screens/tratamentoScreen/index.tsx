@@ -1,4 +1,8 @@
-import { listarTratamentos, tratamentoDeletar, tratamentoEncerrar } from "@/src/api/tratamentoApi";
+import {
+  listarTratamentos,
+  tratamentoDeletar,
+  tratamentoEncerrar,
+} from "@/src/api/tratamentoApi";
 import { ActionButton } from "@/src/components/actionButton/actionButton";
 import { AlertModal } from "@/src/components/alertModal";
 import { DeletePressable } from "@/src/components/deletePressable";
@@ -80,8 +84,9 @@ export default function TratamentoScreen() {
 
   const [alertEncerrarVisivel, setAlertEncerrarVisivel] = useState(false);
 
-  const [itemParaEncerrar, setItemParaEncerrar] = useState<TratamentoResponse | null>(null);
-  
+  const [itemParaEncerrar, setItemParaEncerrar] =
+    useState<TratamentoResponse | null>(null);
+
   const [successModalVisible, setSuccessModalVisible] = useState(false);
 
   const insets = useSafeAreaInsets();
@@ -177,13 +182,12 @@ export default function TratamentoScreen() {
       setItemParaEncerrar(null);
 
       setSuccessModalVisible(true);
-
     } catch (err) {
       console.error(err);
       Alert.alert("Erro", "Não foi possível encerrar o tratamento.");
       setAlertEncerrarVisivel(false);
       setItemParaEncerrar(null);
-    } 
+    }
   };
 
   const handleEncerrarTratamento = (tratamento: TratamentoResponse) => {
@@ -391,6 +395,20 @@ export default function TratamentoScreen() {
         }}
         data={tratamentosFiltrados}
         keyExtractor={(item) => item.id.toString()}
+        ListEmptyComponent={
+          <View style={styles.emptyContainer}>
+            <MaterialCommunityIcons
+              name="medical-bag"
+              size={64}
+              color='#d0d0d0'
+            />
+            <Text style={styles.emptyText}>
+              {filtroAtivo === "ativos"
+                ? "Nenhum tratamento em andamento."
+                : "Nenhum histórico de tratamentos concluídos."}
+            </Text>
+          </View>
+        }
         renderItem={({ item }) => {
           const isConcluido = isTratamentoVencido(item.dataDeTermino);
 
@@ -427,7 +445,7 @@ export default function TratamentoScreen() {
                             <MaterialCommunityIcons
                               name="check-circle"
                               size={20}
-                              color='#fff'
+                              color="#fff"
                             />{" "}
                             CONCLUÍDO
                           </Text>
@@ -470,7 +488,7 @@ export default function TratamentoScreen() {
                           <MaterialCommunityIcons
                             name="stop-circle-outline"
                             size={24}
-                            color='#d32f2f'
+                            color="#d32f2f"
                           />
                         </Pressable>
                         <Pressable
@@ -497,13 +515,6 @@ export default function TratamentoScreen() {
             </View>
           );
         }}
-        ListEmptyComponent={
-          <View style={styles.emptyContainer}>
-            {filtroAtivo === "ativos"
-              ? "Nenhum tratamento em andamento."
-              : "Nenhum histórico de tratamentos concluídos."}
-          </View>
-        }
       />
 
       <Modal
@@ -589,8 +600,8 @@ export default function TratamentoScreen() {
         title="ENCERRAR TRATAMENTO"
         message={`Deseja encerrar o tratamento "${itemParaEncerrar?.nome}"? Os lembretes futuros serão cancelados e ele irá para o histórico.`}
         onClose={() => {
-            setAlertEncerrarVisivel(false);
-            setItemParaEncerrar(null);
+          setAlertEncerrarVisivel(false);
+          setItemParaEncerrar(null);
         }}
         onConfirm={onConfirmEncerrar}
         confirmText="Sim, Encerrar"
@@ -613,7 +624,7 @@ export default function TratamentoScreen() {
         style={({ pressed }) => [styles.fab, pressed && styles.fabPressed]}
         onPress={abrirModalCadastro}
       >
-        <MaterialCommunityIcons name="plus" size={30} color='#1CBDCF' />
+        <MaterialCommunityIcons name="plus" size={30} color="#1CBDCF" />
       </Pressable>
     </SafeAreaView>
   );
