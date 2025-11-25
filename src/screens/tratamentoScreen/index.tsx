@@ -1,14 +1,16 @@
-import { listarTratamentos, tratamentoDeletar } from "@/src/api/tratamentoApi";
+import { listarTratamentos, tratamentoDeletar, tratamentoEncerrar } from "@/src/api/tratamentoApi";
 import { ActionButton } from "@/src/components/actionButton/actionButton";
 import { AlertModal } from "@/src/components/alertModal";
 import { DeletePressable } from "@/src/components/deletePressable";
 import FormularioTratamento from "@/src/components/formTratamento";
 import { useSession } from "@/src/contexts/authContext";
+import { TratamentoStatus } from "@/src/enums/tratamento/tratamentoStatus";
 import { TratamentoResponse } from "@/src/types/tratamentoTypes";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
   FlatList,
   KeyboardAvoidingView,
   LayoutAnimation,
@@ -75,6 +77,12 @@ export default function TratamentoScreen() {
   const [filtroAtivo, setFitlroAtivo] = useState<"ativos" | "concluídos">(
     "ativos"
   );
+
+  const [alertEncerrarVisivel, setAlertEncerrarVisivel] = useState(false);
+
+  const [itemParaEncerrar, setItemParaEncerrar] = useState<TratamentoResponse | null>(null);
+  
+  const [successModalVisible, setSuccessModalVisible] = useState(false);
 
   const insets = useSafeAreaInsets();
 
@@ -151,6 +159,38 @@ export default function TratamentoScreen() {
     setAlertVisivel(true);
   };
 
+  const onConfirmEncerrar = async () => {
+    if (!itemParaEncerrar || !session) return;
+
+    try {
+      await tratamentoEncerrar(session, itemParaEncerrar.id);
+
+      setTratamentos((listaAtual) =>
+        listaAtual.map((item) =>
+          item.id === itemParaEncerrar.id
+            ? { ...item, status: TratamentoStatus.CONCLUIDO }
+            : item
+        )
+      );
+
+      setAlertEncerrarVisivel(false);
+      setItemParaEncerrar(null);
+
+      setSuccessModalVisible(true);
+
+    } catch (err) {
+      console.error(err);
+      Alert.alert("Erro", "Não foi possível encerrar o tratamento.");
+      setAlertEncerrarVisivel(false);
+      setItemParaEncerrar(null);
+    } 
+  };
+
+  const handleEncerrarTratamento = (tratamento: TratamentoResponse) => {
+    setItemParaEncerrar(tratamento);
+    setAlertEncerrarVisivel(true);
+  };
+
   const onConfirmarDelete = () => {
     // se não tiver um item selecionado, não faz nada
     if (itemParaDeletar === null) {
@@ -215,14 +255,26 @@ export default function TratamentoScreen() {
   };
 
   const tratamentosFiltrados = useMemo(() => {
-    return tratamentos.filter((t) => {
-      const vencido = isTratamentoVencido(t.dataDeTermino);
+    const lista = tratamentos.filter((t) => {
+      const dataVencida = isTratamentoVencido(t.dataDeTermino);
+
+      const statusEncerrado =
+        t.status === TratamentoStatus.CONCLUIDO ||
+        t.status === TratamentoStatus.CANCELADO;
+
+      const isConcluido = dataVencida || statusEncerrado;
 
       if (filtroAtivo === "ativos") {
-        return !vencido;
+        return !isConcluido;
       } else {
-        return vencido;
+        return isConcluido;
       }
+    });
+
+    return lista.sort((a, b) => {
+      const dataA = new Date(a.dataDeInicio).getTime();
+      const dataB = new Date(b.dataDeInicio).getTime();
+      return dataA - dataB;
     });
   }, [tratamentos, filtroAtivo]);
 
@@ -238,7 +290,13 @@ export default function TratamentoScreen() {
     let concluidos = 0;
 
     tratamentos.forEach((t) => {
-      if (isTratamentoVencido(t.dataDeTermino)) {
+      const dataVencida = isTratamentoVencido(t.dataDeTermino);
+
+      const statusEncerrado =
+        t.status === TratamentoStatus.CONCLUIDO ||
+        t.status === TratamentoStatus.CANCELADO;
+
+      if (dataVencida || statusEncerrado) {
         concluidos++;
       } else {
         ativos++;
@@ -369,7 +427,7 @@ export default function TratamentoScreen() {
                             <MaterialCommunityIcons
                               name="check-circle"
                               size={20}
-                              color="#fff"
+                              color='#fff'
                             />{" "}
                             CONCLUÍDO
                           </Text>
@@ -403,17 +461,30 @@ export default function TratamentoScreen() {
 
                   <View style={styles.rightButtonsContainer}>
                     {!isConcluido && (
-                      <Pressable
-                        style={styles.pressableButton}
-                        onPress={() => abrirModalEdicao(item)}
-                        disabled={isDeleting}
-                      >
-                        <MaterialCommunityIcons
-                          name="pencil"
-                          size={24}
-                          color="black"
-                        />
-                      </Pressable>
+                      <>
+                        <Pressable
+                          style={[styles.pressableButton, { marginRight: 8 }]}
+                          onPress={() => handleEncerrarTratamento(item)}
+                          disabled={isDeleting}
+                        >
+                          <MaterialCommunityIcons
+                            name="stop-circle-outline"
+                            size={24}
+                            color='#d32f2f'
+                          />
+                        </Pressable>
+                        <Pressable
+                          style={styles.pressableButton}
+                          onPress={() => abrirModalEdicao(item)}
+                          disabled={isDeleting}
+                        >
+                          <MaterialCommunityIcons
+                            name="pencil"
+                            size={24}
+                            color="black"
+                          />
+                        </Pressable>
+                      </>
                     )}
 
                     <DeletePressable
@@ -513,11 +584,36 @@ export default function TratamentoScreen() {
         isDestructive={true}
       />
 
+      <AlertModal
+        visible={alertEncerrarVisivel}
+        title="ENCERRAR TRATAMENTO"
+        message={`Deseja encerrar o tratamento "${itemParaEncerrar?.nome}"? Os lembretes futuros serão cancelados e ele irá para o histórico.`}
+        onClose={() => {
+            setAlertEncerrarVisivel(false);
+            setItemParaEncerrar(null);
+        }}
+        onConfirm={onConfirmEncerrar}
+        confirmText="Sim, Encerrar"
+        cancelText="Voltar"
+        isDestructive={false}
+      />
+
+      <AlertModal
+        visible={successModalVisible}
+        title="SUCESSO!"
+        message="O tratamento foi encerrado e movido para o histórico."
+        onClose={() => setSuccessModalVisible(false)}
+        onConfirm={() => setSuccessModalVisible(false)}
+        confirmText="OK"
+        cancelText="Fechar"
+        isDestructive={false}
+      />
+
       <Pressable
         style={({ pressed }) => [styles.fab, pressed && styles.fabPressed]}
         onPress={abrirModalCadastro}
       >
-        <MaterialCommunityIcons name="plus" size={30} color="#1CBDCF" />
+        <MaterialCommunityIcons name="plus" size={30} color='#1CBDCF' />
       </Pressable>
     </SafeAreaView>
   );

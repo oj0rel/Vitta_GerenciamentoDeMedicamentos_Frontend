@@ -103,4 +103,27 @@ export const tratamentoDeletar = async (
     console.error("Erro na chamada parar deletar tratamento: ", error);
     throw error;
   }
+  
+}
+
+export const tratamentoEncerrar = async (
+  token: string,
+  tratamentoId: number,
+): Promise<TratamentoResponse> => {
+  try {
+    const response = await apiManager.patch<TratamentoResponse>(
+      `api/tratamentos/encerrar/${tratamentoId}`, 
+      {},
+      {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("Erro na chamada parar encerrar tratamento: ", error);
+    throw error;
+  }
 }

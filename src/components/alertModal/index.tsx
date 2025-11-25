@@ -24,8 +24,6 @@ export const AlertModal = ({
   isDestructive = false,
 }: AlertModalProps) => {
 
-  // Função interna para o botão de confirmar, que
-  // executa a ação E fecha o modal.
   const handleConfirm = () => {
     onConfirm();
     onClose();
